@@ -34,4 +34,4 @@
 #define LIT_STRING    286
 #define TOKEN_ERROR   290
 
-/* END OF FILE *
+/* END OF FILE */

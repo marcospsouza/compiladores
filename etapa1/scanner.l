@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "hash.c"
+#include "hash.h"
 #include "tokens.h"
 
 ;int running = 1;

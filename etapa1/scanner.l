@@ -1,26 +1,11 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include "hash.h"
-#include "tokens.h"
+	#include "hash.h"
+	#include "tokens.h"
 
-;int running = 1;
-int lineCount = 0;
+	int running = 1;
+	int lineCount = 0;
 
-
-int getLineNumber(){
-	return lineCount;
-}
-
-int isRunning(){
-	return running;
-}
-
-
-void yyerror (char const *s) {
-	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
-	//exit(3);
-}
+	hashtable_t *ht;
 %}
 
 %x COMMENT
@@ -28,7 +13,7 @@ void yyerror (char const *s) {
 %%
 
 \n		{lineCount++;}
-int		{fprintf(stderr, "found int kw\n");return KW_INT;}
+int		{return KW_INT;}
 byte	{return KW_BYTE;}
 short	{return KW_SHORT;}
 long	{return KW_LONG;}
@@ -43,7 +28,7 @@ read	{return KW_READ;}
 return	{return KW_RETURN;}
 print	{return KW_PRINT;}
 
-[a-zA-Z_][a-zA-Z_0-9 \t]*[a-zA-Z_0-9]	{return TK_IDENTIFIER;}
+[a-zA-Z_][a-zA-Z_0-9 \t]*[a-zA-Z_0-9]	{ht = ht_set(ht, yytext,yytext);return TK_IDENTIFIER;}
 
 (<=)	{return OPERATOR_LE;}
 (>=)	{return OPERATOR_GE;}
@@ -52,9 +37,9 @@ print	{return KW_PRINT;}
 (&&)	{return OPERATOR_AND;}
 (\|\|)	{return OPERATOR_OR;}
 
-[0-9]*	{return LIT_INTEGER;}
-[0-9]*\.[0-9]*		{return LIT_REAL;}
-\'.\'	{return LIT_CHAR;}
+[0-9]*	{ht = ht_set(ht, yytext,yytext);return LIT_INTEGER;}
+[0-9]*\.[0-9]*		{ht = ht_set(ht, yytext,yytext);return LIT_REAL;}
+\'.\'	{ht = ht_set(ht, yytext,yytext);return LIT_CHAR;}
 \"[^\"\n]*\"	{return LIT_STRING;}
 
 "//".*
@@ -66,11 +51,22 @@ print	{return KW_PRINT;}
 
 %%
 
-int yywrap(){
-	return 1;
+int getLineNumber(){
+	return lineCount;
 }
 
-int main(){
-	while(1)
-		yylex();
+int isRunning(){
+	return running;
+}
+
+void initMe(){
+	ht = ht_create(100);
+}
+
+void yyerror (char const *s) {
+	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
+	//exit(3);
+}
+int yywrap(){
+	return 1;
 }

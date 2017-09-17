@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
@@ -7,7 +8,6 @@
 
 int entries = 0;
 
-/* Create a new hashtable. */
 hashtable_t *ht_create( int size ) {
 
 	hashtable_t *hashtable = NULL;
@@ -28,12 +28,10 @@ hashtable_t *ht_create( int size ) {
 
 	hashtable->size = size;
 
-	return hashtable;		
+	return hashtable;	
 }
 
-/* Hash a string for a particular hash table. */
 int ht_hash( hashtable_t *hashtable, char *key ) {
-
 	unsigned long int hashval = 0;
 	int i;
 
@@ -47,7 +45,66 @@ int ht_hash( hashtable_t *hashtable, char *key ) {
 	return hashval;
 }
 
-/* Create a key-value pair. */
+
+void entry_destroy(entry_t *next){
+	if(next != NULL){
+		free(next->key);
+		free(next->value);
+		entry_destroy(next->next);
+		free(next);
+	}
+}
+
+void ht_destroy(hashtable_t *hashtable){
+	int i;
+	for(i = 0; i < hashtable->size; i++){
+		entry_destroy(hashtable->table[i]);
+	}
+	free(hashtable->table);
+	free(hashtable);
+}
+
+entry_t *ht_get( hashtable_t *hashtable, char *key ) {
+	int bin = 0;
+	entry_t *pair;
+
+	bin = ht_hash( hashtable, key );
+
+	pair = hashtable->table[ bin ];
+	while( pair != NULL && pair->key != NULL && strcmp( key, pair->key ) > 0 ) {
+		pair = pair->next;
+	}
+
+	if( pair == NULL || pair->key == NULL || strcmp( key, pair->key ) != 0 ) {
+		return NULL;
+
+	} else {
+		return pair;
+	}
+	
+}
+
+
+hashtable_t *ht_rehash(hashtable_t *old, int size){
+
+	hashtable_t *new = ht_create(size);
+
+	int i;
+	for(i = 0; i < old->size; i++){
+		entry_t *next = old->table[i];
+		while(next != NULL){
+			if(next->key != NULL && next->value != NULL){
+				new = ht_set(new, next->key, next->value);
+				entry_t *new_entry = ht_get(new, next->key);
+			}
+		}
+	}
+
+	ht_destroy(old);
+	return new;
+}
+
+
 entry_t *ht_newpair( char *key, char *value ) {
 	entry_t *newpair;
 
@@ -64,13 +121,11 @@ entry_t *ht_newpair( char *key, char *value ) {
 	}
 
 	newpair->next = NULL;
-	newpair->reg = -1;
 
 	return newpair;
 }
 
-/* Insert a key-value pair into a hash table. */
-void ht_set( hashtable_t *hashtable, char *key, char *value ) {
+hashtable_t *ht_set( hashtable_t *hashtable, char *key, char *value ) {
 	int bin = 0;
 	entry_t *newpair = NULL;
 	entry_t *next = NULL;
@@ -92,8 +147,6 @@ void ht_set( hashtable_t *hashtable, char *key, char *value ) {
 
 	} else {
 		newpair = ht_newpair( key, value );
-		newpair->declared = 0;
-
 		if( next == hashtable->table[ bin ] ) {
 			entries++;
 			newpair->next = next;
@@ -113,65 +166,4 @@ void ht_set( hashtable_t *hashtable, char *key, char *value ) {
 	}
 
 	return hashtable;
-}
-
-/* Retrieve a key-value pair from a hash table. */
-char *ht_get( hashtable_t *hashtable, char *key ) {
-	int bin = 0;
-	entry_t *pair;
-
-	bin = ht_hash( hashtable, key );
-
-	pair = hashtable->table[ bin ];
-	while( pair != NULL && pair->key != NULL && strcmp( key, pair->key ) > 0 ) {
-		pair = pair->next;
-	}
-
-	if( pair == NULL || pair->key == NULL || strcmp( key, pair->key ) != 0 ) {
-		return NULL;
-
-	} else {
-		return pair;
-	}
-}
-
-hashtable_t *ht_rehash(hashtable_t *old, int size){
-
-	hashtable_t *new = ht_create(size);
-
-	int i;
-	for(i = 0; i < old->size; i++){
-		entry_t *next = old->table[i];
-		while(next != NULL){
-			if(next->key != NULL && next->value != NULL){
-				new = ht_set(new, next->key, next->value);
-				entry_t *new_entry = ht_get(new, next->key);
-				new_entry->params = next->params;
-				new_entry->nature = next->nature;
-				new_entry->data_type = next->data_type;
-				new_entry->reg = next->reg;
-			}
-		}
-	}
-
-	ht_destroy(old);
-	return new;
-}
-
-void entry_destroy(entry_t *next){
-	if(next != NULL){
-		free(next->key);
-		free(next->value);
-		entry_destroy(next->next);
-		free(next);
-	}
-}
-
-void ht_destroy(hashtable_t *hashtable){
-	int i;
-	for(i = 0; i < hashtable->size; i++){
-		entry_destroy(hashtable->table[i]);
-	}
-	free(hashtable->table);
-	free(hashtable);
 }

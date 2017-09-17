@@ -28,7 +28,7 @@ void yyerror (char const *s) {
 %%
 
 \n		{lineCount++;}
-int		{return KW_INT;}
+int		{fprintf(stderr, "found int kw\n");return KW_INT;}
 byte	{return KW_BYTE;}
 short	{return KW_SHORT;}
 long	{return KW_LONG;}
@@ -70,4 +70,7 @@ int yywrap(){
 	return 1;
 }
 
-#include "main.c"
+int main(){
+	while(1)
+		yylex();
+}

@@ -850,7 +850,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 31 "scanner.l"
-{return KW_INT;}
+{fprintf(stderr, "found int kw\n");return KW_INT;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
@@ -2002,5 +2002,8 @@ int yywrap(){
 	return 1;
 }
 
-#include "main.c"
+int main(){
+	while(1)
+		yylex();
+}
 

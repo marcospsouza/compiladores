@@ -84,6 +84,18 @@ entry_t *ht_get( hashtable_t *hashtable, char *key ) {
 	
 }
 
+void ht_print(hashtable_t *hashtable){
+
+	int i;
+	for(i = 0; i < hashtable->size; i++){
+		entry_t *next = hashtable->table[i];
+		while(next != NULL){
+			printf("%s ", next->value);
+			next = next->next;
+		}
+	}
+	printf("\n");
+}
 
 hashtable_t *ht_rehash(hashtable_t *old, int size){
 

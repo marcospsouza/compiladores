@@ -28,7 +28,7 @@ read	{return KW_READ;}
 return	{return KW_RETURN;}
 print	{return KW_PRINT;}
 
-[a-zA-Z_][a-zA-Z_0-9 \t]*[a-zA-Z_0-9]	{ht = ht_set(ht, yytext,yytext);return TK_IDENTIFIER;}
+[a-zA-Z_][a-zA-Z_0-9 \t]*[a-zA-Z_0-9]	{ht = ht_set(ht, yytext,yytext);ht_print(ht);return TK_IDENTIFIER;}
 
 (<=)	{return OPERATOR_LE;}
 (>=)	{return OPERATOR_GE;}
@@ -37,10 +37,10 @@ print	{return KW_PRINT;}
 (&&)	{return OPERATOR_AND;}
 (\|\|)	{return OPERATOR_OR;}
 
-[0-9]*	{ht = ht_set(ht, yytext,yytext);return LIT_INTEGER;}
-[0-9]*\.[0-9]*		{ht = ht_set(ht, yytext,yytext);return LIT_REAL;}
-\'.\'	{ht = ht_set(ht, yytext,yytext);return LIT_CHAR;}
-\"[^\"\n]*\"	{return LIT_STRING;}
+[0-9]*	{ht = ht_set(ht, yytext,yytext);ht_print(ht);return LIT_INTEGER;}
+[0-9]*\.[0-9]*		{ht = ht_set(ht, yytext,yytext);ht_print(ht);return LIT_REAL;}
+\'.\'	{ht = ht_set(ht, yytext,yytext);ht_print(ht);return LIT_CHAR;}
+
 
 "//".*
 

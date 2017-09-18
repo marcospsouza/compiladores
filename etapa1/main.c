@@ -6,5 +6,8 @@
 extern FILE *yyin;
 
 int main(int argc, char **argv){
-	yylex();
+
+	initMe();
+	while(1)
+		yylex();
 }

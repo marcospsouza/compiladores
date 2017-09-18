@@ -1,181 +1,72 @@
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
-#include <string.h>
 #include "hash.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+void hash_create(){
 
-int entries = 0;
-
-hashtable_t *ht_create( int size ) {
-
-	hashtable_t *hashtable = NULL;
 	int i;
-
-	if( size < 1 ) return NULL;
-
-	if( ( hashtable = malloc( sizeof( hashtable_t ) ) ) == NULL ) {
-		return NULL;
+	for (i=0; i< HASH_SIZE; i++){
+	    table[i] = 0;
 	}
-
-	if( ( hashtable->table = malloc( sizeof( entry_t * ) * size ) ) == NULL ) {
-		return NULL;
-	}
-	for( i = 0; i < size; i++ ) {
-		hashtable->table[i] = NULL;
-	}
-
-	hashtable->size = size;
-
-	return hashtable;	
 }
 
-int ht_hash( hashtable_t *hashtable, char *key ) {
-	unsigned long int hashval = 0;
+
+void hash_print(){
+
+	HASH_NODE *n;
+
+	int i;
+	for(i = 0; i < HASH_SIZE; i++){
+	   for(n = table[i]; n != NULL; n = n->next){
+	       printf ("%s\n",n->value);
+	   }
+	}
+}
+
+int hash_function(char *text){
+
+	unsigned long int hash_address = 0;
 	int i;
 
-	for(i = 0; i < strlen(key); i++) {
-		hashval = hashval * 256;
-		hashval += key[ i ];
-		hashval %= hashtable->size;
+	for(i = 0; i < strlen(text); i++) {
+		hash_address = hash_address * 256;
+		hash_address += text[i];
+		hash_address %= HASH_SIZE;
 		i++;
 	}
 
-	return hashval;
+	return hash_address;
 }
 
 
-void entry_destroy(entry_t *next){
-	if(next != NULL){
-		free(next->key);
-		free(next->value);
-		entry_destroy(next->next);
-		free(next);
-	}
-}
+HASH_NODE *hash_insert (char *text, int type){
 
-void ht_destroy(hashtable_t *hashtable){
-	int i;
-	for(i = 0; i < hashtable->size; i++){
-		entry_destroy(hashtable->table[i]);
-	}
-	free(hashtable->table);
-	free(hashtable);
-}
+	HASH_NODE *newnode;
+	int address = hash_function(text);
 
-entry_t *ht_get( hashtable_t *hashtable, char *key ) {
-	int bin = 0;
-	entry_t *pair;
-
-	bin = ht_hash( hashtable, key );
-
-	pair = hashtable->table[ bin ];
-	while( pair != NULL && pair->key != NULL && strcmp( key, pair->key ) > 0 ) {
-		pair = pair->next;
-	}
-
-	if( pair == NULL || pair->key == NULL || strcmp( key, pair->key ) != 0 ) {
-		return NULL;
-
-	} else {
-		return pair;
-	}
+	if ((newnode = hash_search(text)) != 0)
+		return newnode;
 	
+	newnode = (HASH_NODE *) malloc (sizeof(HASH_NODE));
+	newnode->value = (char *) malloc (sizeof(char)*strlen(text));
+	strcpy(newnode->value, text);
+        
+	newnode->tk_type = type;
+	newnode->next = table[address];
+	table[address] = newnode;
+	return newnode;
 }
 
-void ht_print(hashtable_t *hashtable){
+HASH_NODE *hash_search (char *text){
 
-	int i;
-	for(i = 0; i < hashtable->size; i++){
-		entry_t *next = hashtable->table[i];
-		while(next != NULL){
-			printf("%s ", next->value);
-			next = next->next;
-		}
+	HASH_NODE *node;
+	int address;
+	address = hash_function(text);
+
+	for (node=table[address]; node; node=node->next){
+		if ((strcmp (node->value, text)) == 0)
+	 		return node;
 	}
-	printf("\n");
-}
-
-hashtable_t *ht_rehash(hashtable_t *old, int size){
-
-	hashtable_t *new = ht_create(size);
-
-	int i;
-	for(i = 0; i < old->size; i++){
-		entry_t *next = old->table[i];
-		while(next != NULL){
-			if(next->key != NULL && next->value != NULL){
-				new = ht_set(new, next->key, next->value);
-				entry_t *new_entry = ht_get(new, next->key);
-			}
-		}
-	}
-
-	ht_destroy(old);
-	return new;
-}
-
-
-entry_t *ht_newpair( char *key, char *value ) {
-	entry_t *newpair;
-
-	if( ( newpair = malloc( sizeof( entry_t ) ) ) == NULL ) {
-		return NULL;
-	}
-
-	if( ( newpair->key = strdup( key ) ) == NULL ) {
-		return NULL;
-	}
-
-	if( ( newpair->value = strdup( value ) ) == NULL ) {
-		return NULL;
-	}
-
-	newpair->next = NULL;
-
-	return newpair;
-}
-
-hashtable_t *ht_set( hashtable_t *hashtable, char *key, char *value ) {
-	int bin = 0;
-	entry_t *newpair = NULL;
-	entry_t *next = NULL;
-	entry_t *last = NULL;
-
-	bin = ht_hash( hashtable, key );
-
-	next = hashtable->table[ bin ];
-
-	while( next != NULL && next->key != NULL && strcmp( key, next->key ) > 0 ) {
-		last = next;
-		next = next->next;
-	}
-
-	if( next != NULL && next->key != NULL && strcmp( key, next->key ) == 0 ) {
-
-		free( next->value );
-		next->value = strdup( value );
-
-	} else {
-		newpair = ht_newpair( key, value );
-		if( next == hashtable->table[ bin ] ) {
-			entries++;
-			newpair->next = next;
-			hashtable->table[ bin ] = newpair;
-
-			if (entries >= hashtable->size/2){
-				hashtable = ht_rehash(hashtable, hashtable->size*4);
-			}
-	
-		} else if ( next == NULL ) {
-			last->next = newpair;
-	
-		} else  {
-			newpair->next = next;
-			last->next = newpair;
-		}
-	}
-
-	return hashtable;
+	return 0;
 }

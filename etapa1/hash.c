@@ -1,3 +1,7 @@
+/* 
+	Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
+*/
+
 #include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +19,6 @@ void hash_create(){
 void hash_print(){
 
 	HASH_NODE *n;
-
 	int i;
 	for(i = 0; i < HASH_SIZE; i++){
 	   for(n = table[i]; n != NULL; n = n->next){

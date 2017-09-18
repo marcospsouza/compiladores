@@ -1,3 +1,7 @@
+/* 
+	Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -96,7 +100,6 @@ int main(int argc, char **argv){
 					break;
 				default:
 					printf("%c\n",t);
-
 
 			}
 		}

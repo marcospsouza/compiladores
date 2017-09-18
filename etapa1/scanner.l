@@ -1,9 +1,12 @@
 %{
+	 
+	//Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
+
 	#include "hash.h"
 	#include "tokens.h"
 
 	int running = 1;
-	int lineCount = 0;
+	int lineCount = 1;
 
 %}
 
@@ -27,7 +30,6 @@ read	{return KW_READ;}
 return	{return KW_RETURN;}
 print	{return KW_PRINT;}
 
-[a-zA-z_]([[a-zA-z_0-9 ]*[a-zA-z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);hash_print();return TK_IDENTIFIER;}
 
 (<=)	{return OPERATOR_LE;}
 (>=)	{return OPERATOR_GE;}
@@ -36,13 +38,14 @@ print	{return KW_PRINT;}
 (&&)	{return OPERATOR_AND;}
 (\|\|)	{return OPERATOR_OR;}
 
+[a-zA-z_]([[a-zA-z_0-9 ]*[a-zA-z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);return TK_IDENTIFIER;}
 
 [,;:\(\)\[\]{}\+\-\*/<>=!&\$#] {return yytext[0];}
 
-[0-9]*			{hash_insert(yytext,LIT_INTEGER);hash_print();return LIT_INTEGER;}
-[0-9]*\.[0-9]*	{hash_insert(yytext,LIT_REAL);hash_print();return LIT_REAL;}
-\'.\'			{hash_insert(yytext,LIT_CHAR);hash_print();return LIT_CHAR;}
-\"[^\"\n]*\" 	{hash_insert(yytext,LIT_STRING);hash_print(); return LIT_STRING;}
+[0-9]*			{hash_insert(yytext,LIT_INTEGER);return LIT_INTEGER;}
+[0-9]*\.[0-9]*	{hash_insert(yytext,LIT_REAL);return LIT_REAL;}
+\'.\'			{hash_insert(yytext,LIT_CHAR);return LIT_CHAR;}
+\"[^\"\n]*\" 	{hash_insert(yytext,LIT_STRING);return LIT_STRING;}
 
 "//".*
 

@@ -20,8 +20,8 @@ int main(int argc, char **argv){
 		while(isRunning()){
 			int t = yylex();
 			switch(t){
-				case KW_INT:
-					printf("INT\n");
+				case KW_BYTE:
+					printf("BYTE\n");
 					break;
 				case KW_SHORT:    
 					printf("SHORT\n");
@@ -103,5 +103,6 @@ int main(int argc, char **argv){
 
 			}
 		}
+		hash_print();
 	}
 }

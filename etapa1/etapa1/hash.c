@@ -17,7 +17,7 @@ void hash_create(){
 
 
 void hash_print(){
-
+	printf("\nPRINTANDO HASH\n");
 	HASH_NODE *n;
 	int i;
 	for(i = 0; i < HASH_SIZE; i++){

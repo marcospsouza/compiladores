@@ -13,13 +13,10 @@ int main(int argc, char **argv){
 	}
 	else if((yyin = fopen(argv[1], "r")) != NULL){
 		initMe();
-
-		while(isRunning()){
+		yyparse();
+		/*while(isRunning()){
 			int t = yylex();
 			switch(t){
-				case KW_INT:
-					printf("INT\n");
-					break;
 				case KW_SHORT:    
 					printf("SHORT\n");
 					break;
@@ -100,6 +97,6 @@ int main(int argc, char **argv){
 
 
 			}
-		}
+		}*/
 	}
 }

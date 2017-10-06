@@ -12,7 +12,6 @@
 %%
 
 \n		{lineCount++;}
-int		{return KW_INT;}
 byte	{return KW_BYTE;}
 short	{return KW_SHORT;}
 long	{return KW_LONG;}
@@ -75,7 +74,7 @@ void initMe(){
 
 void yyerror (char const *s) {
 	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
-	//exit(3);
+	exit(3);
 }
 int yywrap(){
 	return 1;

@@ -90,7 +90,7 @@ lcmd : cmd lcmd
 
 
 int yyerrror(char *msg){
-	fprint(stderr,"Eita, erro1!!@\n");
+	fprintf(stderr,"Eita, erro1!!@\n");
 	exit(3);
 }
 

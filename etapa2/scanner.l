@@ -1,0 +1,82 @@
+%{
+	#include "hash.h"
+	#include "y.tab.h"
+
+	int running = 1;
+	int lineCount = 0;
+
+%}
+
+%x COMMENT
+
+%%
+
+\n		{lineCount++;}
+int		{return KW_INT;}
+byte	{return KW_BYTE;}
+short	{return KW_SHORT;}
+long	{return KW_LONG;}
+float	{return KW_FLOAT;}
+double	{return KW_DOUBLE;}
+if		{return KW_IF;}
+then	{return KW_THEN;}
+else	{return KW_ELSE;}
+while	{return KW_WHILE;}
+for		{return KW_FOR;}
+read	{return KW_READ;}
+return	{return KW_RETURN;}
+print	{return KW_PRINT;}
+
+[a-zA-z_]([[a-zA-z_0-9 ]*[a-zA-z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);hash_print();return TK_IDENTIFIER;}
+
+(<=)	{return OPERATOR_LE;}
+(>=)	{return OPERATOR_GE;}
+(==)	{return OPERATOR_EQ;}
+(!=)	{return OPERATOR_NE;}
+(&&)	{return OPERATOR_AND;}
+(\|\|)	{return OPERATOR_OR;}
+
+
+[,;:\(\)\[\]{}\+\-\*/<>=!&\$#] {return yytext[0];}
+
+[0-9]*			{hash_insert(yytext,LIT_INTEGER);hash_print();return LIT_INTEGER;}
+[0-9]*\.[0-9]*	{hash_insert(yytext,LIT_REAL);hash_print();return LIT_REAL;}
+\'.\'			{hash_insert(yytext,LIT_CHAR);hash_print();return LIT_CHAR;}
+\"[^\"\n]*\" 	{hash_insert(yytext,LIT_STRING);hash_print(); return LIT_STRING;}
+
+"//".*
+
+"/*"			{BEGIN COMMENT;}
+
+<COMMENT>"*/" 	{BEGIN 0;}
+<COMMENT>\n 	{lineCount++;}
+<COMMENT>.
+
+
+<<EOF>>		{running = 0; return 0;}
+[ \t\r]+
+
+
+.		{return TOKEN_ERROR;}
+
+%%
+
+int getLineNumber(){
+	return lineCount;
+}
+
+int isRunning(){
+	return running;
+}
+
+void initMe(){
+	hash_create();
+}
+
+void yyerror (char const *s) {
+	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
+	//exit(3);
+}
+int yywrap(){
+	return 1;
+}

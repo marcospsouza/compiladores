@@ -1,12 +1,13 @@
 #define HASH_SIZE 977
 
-typedef struct node
+struct node
 {
 	char *value;
 	int tk_type;
 	struct node *next;
-} HASH_NODE;
+};
 
+typedef struct node HASH_NODE;
 HASH_NODE *table[HASH_SIZE];
 
 

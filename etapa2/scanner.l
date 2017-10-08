@@ -4,7 +4,6 @@
 
 	int running = 1;
 	int lineCount = 0;
-
 %}
 
 %x COMMENT
@@ -26,7 +25,7 @@ read	{return KW_READ;}
 return	{return KW_RETURN;}
 print	{return KW_PRINT;}
 
-[a-zA-z_]([[a-zA-z_0-9 ]*[a-zA-z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);hash_print();return TK_IDENTIFIER;}
+[a-zA-z_]([[a-zA-z_0-9 ]*[a-zA-z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);yylval.symbol = atoi(yytext);hash_print();return TK_IDENTIFIER;}
 
 (<=)	{return OPERATOR_LE;}
 (>=)	{return OPERATOR_GE;}
@@ -38,10 +37,10 @@ print	{return KW_PRINT;}
 
 [,;:\(\)\[\]{}\+\-\*/<>=!&\$#] {return yytext[0];}
 
-[0-9]*			{hash_insert(yytext,LIT_INTEGER);hash_print();return LIT_INTEGER;}
-[0-9]*\.[0-9]*	{hash_insert(yytext,LIT_REAL);hash_print();return LIT_REAL;}
-\'.\'			{hash_insert(yytext,LIT_CHAR);hash_print();return LIT_CHAR;}
-\"[^\"\n]*\" 	{hash_insert(yytext,LIT_STRING);hash_print(); return LIT_STRING;}
+[0-9]*			{hash_insert(yytext,LIT_INTEGER);yylval.symbol = atoi(yytext);hash_print();return LIT_INTEGER;}
+[0-9]*\.[0-9]*	{hash_insert(yytext,LIT_REAL);yylval.symbol = atoi(yytext);hash_print();return LIT_REAL;}
+\'.\'			{hash_insert(yytext,LIT_CHAR);yylval.symbol = atoi(yytext);hash_print();return LIT_CHAR;}
+\"[^\"\n]*\" 	{hash_insert(yytext,LIT_STRING);yylval.symbol = atoi(yytext);hash_print(); return LIT_STRING;}
 
 "//".*
 
@@ -72,10 +71,6 @@ void initMe(){
 	hash_create();
 }
 
-void yyerror (char const *s) {
-	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
-	exit(3);
-}
 int yywrap(){
 	return 1;
 }

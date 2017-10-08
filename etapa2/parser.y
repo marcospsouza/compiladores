@@ -15,11 +15,14 @@ for 7 ;
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "hash.h"
 int yylex();
-int yyerror(char *msg);
+void yyerror(char const *s);
 
 %}
 
+
+%union{ HASH_NODE* symbol; }
 
 %token KW_BYTE 256
 %token KW_SHORT 257
@@ -43,11 +46,14 @@ int yyerror(char *msg);
 %token OPERATOR_AND 274
 %token OPERATOR_OR 275
 
+
 %token TK_IDENTIFIER 280
+
 %token LIT_INTEGER 281
 %token LIT_REAL 282
 %token LIT_CHAR 285
 %token LIT_STRING 286
+
 
 %token TOKEN_ERROR 290
 
@@ -87,10 +93,8 @@ lcmd : cmd lcmd
 
 %%
 
-
-
-int yyerrror(char *msg){
-	fprintf(stderr,"Eita, erro1!!@\n");
+void yyerror (char const *s) {
+	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
 	exit(3);
 }
 

@@ -22,6 +22,7 @@ void hash_print(){
 	       printf ("%s\n",n->value);
 	   }
 	}
+	printf("\n");
 }
 
 int hash_function(char *text){

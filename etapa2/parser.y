@@ -72,6 +72,13 @@ dec : vardec
 vardec : TK_IDENTIFIER ':' vartype '=' lit ';'
 	;
 
+arraydec : TK_IDENTIFIER ':' vartype '[' LIT_INTEGER']' litlist
+	;
+
+litlist: lit ';'
+	| lit litlist
+	;
+
 vartype: KW_BYTE
 	| KW_SHORT
 	| KW_LONG

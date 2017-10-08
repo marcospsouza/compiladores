@@ -70,9 +70,7 @@ dec : vardec
 	;
 
 vardec : TK_IDENTIFIER ':' vartype '=' lit ';'
-	;
-
-arraydec : TK_IDENTIFIER ':' vartype '[' LIT_INTEGER']' litlist
+	| TK_IDENTIFIER ':' vartype ';'
 	;
 
 litlist: lit ';'
@@ -84,6 +82,7 @@ vartype: KW_BYTE
 	| KW_LONG
 	| KW_FLOAT
 	| KW_DOUBLE
+	| KW_SHORT '[' LIT_INTEGER ']' litlist
 	;
 
 lit: LIT_INTEGER
@@ -95,11 +94,16 @@ lit: LIT_INTEGER
 fundec : KW_BYTE TK_IDENTIFIER '(' ')' cmd
 	;
 
-cmd : TK_IDENTIFIER '=' exp
+cmd : TK_IDENTIFIER '=' exp ';'
 	| block
 	;
 
-exp : 
+exp : '(' exp ')'
+    | TK_IDENTIFIER
+    | TK_IDENTIFIER '[' exp ']'
+    | LIT_INTEGER
+    | LIT_CHAR
+    | LIT_REAL
 	;
 
 block : '{' lcmd '}'

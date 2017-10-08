@@ -7,7 +7,7 @@ i: long = 0;
 f: float = 10.55;
 c: byte = 'x';
 d: byte = 65;
-
+//a = 5;
 
 (long) main()
   {

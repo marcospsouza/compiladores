@@ -73,7 +73,7 @@ vardec : TK_IDENTIFIER ':' vartype '=' lit ';'
 	| TK_IDENTIFIER ':' vartype ';'
 	;
 
-litlist: lit ';'
+litlist: lit
 	| lit litlist
 	;
 
@@ -83,6 +83,7 @@ vartype: KW_BYTE
 	| KW_FLOAT
 	| KW_DOUBLE
 	| KW_SHORT '[' LIT_INTEGER ']' litlist
+	| KW_LONG '[' LIT_INTEGER ']' litlist
 	;
 
 lit: LIT_INTEGER

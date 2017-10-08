@@ -69,7 +69,20 @@ dec : vardec
 	| fundec
 	;
 
-vardec : KW_BYTE TK_IDENTIFIER
+vardec : TK_IDENTIFIER ':' vartype '=' lit ';'
+	;
+
+vartype: KW_BYTE
+	| KW_SHORT
+	| KW_LONG
+	| KW_FLOAT
+	| KW_DOUBLE
+	;
+
+lit: LIT_INTEGER
+	| LIT_REAL
+	| LIT_CHAR
+	| LIT_STRING
 	;
 
 fundec : KW_BYTE TK_IDENTIFIER '(' ')' cmd

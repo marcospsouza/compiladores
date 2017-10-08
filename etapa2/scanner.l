@@ -25,7 +25,7 @@ read	{return KW_READ;}
 return	{return KW_RETURN;}
 print	{return KW_PRINT;}
 
-[a-zA-z_]([[a-zA-z_0-9 ]*[a-zA-z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);yylval.symbol = atoi(yytext);hash_print();return TK_IDENTIFIER;}
+[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);yylval.symbol = atoi(yytext);hash_print();return TK_IDENTIFIER;}
 
 (<=)	{return OPERATOR_LE;}
 (>=)	{return OPERATOR_GE;}

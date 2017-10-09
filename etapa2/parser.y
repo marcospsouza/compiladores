@@ -94,14 +94,22 @@ lit: LIT_INTEGER
 	;
 
 
-fundec : '(' vartype ')' TK_IDENTIFIER '(' args ')' cmd
+fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd
 	;
 
 args: exp arglist
-	|
+	| 
 	;
 
 arglist: ',' exp arglist
+	|
+	;
+
+argsdef: TK_IDENTIFIER ':' vartype argsdeflist
+	| 
+	;
+
+argsdeflist: ',' argsdef argsdeflist
 	|
 	;
 
@@ -113,21 +121,28 @@ vartype: KW_BYTE
 
 cmd : atrib
 	| KW_PRINT printargs
-	| KW_READ '>' TK_IDENTIFIER ';'
+	| KW_READ '>' TK_IDENTIFIER
+	| KW_WHILE '(' exp ')' cmd
+	| KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd
+	| KW_IF '(' exp ')' KW_THEN cmd
+	| KW_RETURN '(' exp ')'
 	| block
+	|
 	;
 
 printargs: LIT_STRING ',' printargs
 	| exp ',' printargs
-	| LIT_STRING ';'
-	| exp ';'
+	| LIT_STRING ',' printargs
+	| LIT_STRING
+	| exp
 
-atrib : TK_IDENTIFIER '=' exp ';'
-	| TK_IDENTIFIER '[' exp ']' '=' exp ';'
+atrib : TK_IDENTIFIER '=' exp
+	| TK_IDENTIFIER '[' exp ']' '=' exp
 
 exp : '(' exp ')'
     | TK_IDENTIFIER
     | TK_IDENTIFIER '[' exp ']'
+	| TK_IDENTIFIER '(' args ')'
     | LIT_INTEGER
     | LIT_CHAR
     | LIT_REAL
@@ -141,14 +156,18 @@ op: OPERATOR_LE
     | OPERATOR_AND
     | OPERATOR_OR
     | '*'
+    | '/'
     | '+'
     | '-'
+    | '>'
+    | '<'
+    | '!' 
 	;  
 
 block : '{' lcmd '}'
 	;
 
-lcmd : cmd lcmd
+lcmd : lcmd cmd ';'
 	|
 	;
 

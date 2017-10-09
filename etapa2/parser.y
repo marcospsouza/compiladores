@@ -69,15 +69,16 @@ dec : vardec
 	| fundec
 	;
 
-vardec : TK_IDENTIFIER ':' vartype '=' lit ';'
-	| TK_IDENTIFIER ':' vartype ';'
+vardec : TK_IDENTIFIER ':' vartypeandlist '=' lit ';'
+	| TK_IDENTIFIER ':' vartypeandlist ';'
 	;
 
 litlist: lit
 	| lit litlist
+	|
 	;
 
-vartype: KW_BYTE
+vartypeandlist: KW_BYTE
 	| KW_SHORT
 	| KW_LONG
 	| KW_FLOAT
@@ -92,12 +93,36 @@ lit: LIT_INTEGER
 	| LIT_STRING
 	;
 
-fundec : KW_BYTE TK_IDENTIFIER '(' ')' cmd
+
+fundec : '(' vartype ')' TK_IDENTIFIER '(' args ')' cmd
 	;
 
-cmd : TK_IDENTIFIER '=' exp ';'
+args: exp arglist
+	|
+	;
+
+arglist: ',' exp arglist
+	|
+	;
+
+vartype: KW_BYTE
+	| KW_SHORT
+	| KW_LONG
+	| KW_FLOAT
+	| KW_DOUBLE
+
+cmd : atrib
+	| KW_PRINT printargs
 	| block
 	;
+
+printargs: LIT_STRING ',' printargs
+	| exp ',' printargs
+	| LIT_STRING ';'
+	| exp ';'
+
+atrib : TK_IDENTIFIER '=' exp ';'
+	| TK_IDENTIFIER '[' exp ']' '=' exp ';'
 
 exp : '(' exp ')'
     | TK_IDENTIFIER
@@ -105,7 +130,19 @@ exp : '(' exp ')'
     | LIT_INTEGER
     | LIT_CHAR
     | LIT_REAL
+    | exp op exp
 	;
+
+op: OPERATOR_LE
+    | OPERATOR_GE
+    | OPERATOR_EQ
+    | OPERATOR_NE
+    | OPERATOR_AND
+    | OPERATOR_OR
+    | '*'
+    | '+'
+    | '-'
+	;  
 
 block : '{' lcmd '}'
 	;

@@ -113,6 +113,7 @@ vartype: KW_BYTE
 
 cmd : atrib
 	| KW_PRINT printargs
+	| KW_READ '>' TK_IDENTIFIER ';'
 	| block
 	;
 

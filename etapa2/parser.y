@@ -1,15 +1,6 @@
-/*parser.y
+/*
 
-yacc parser.y
-
-yacc -d parser.y
-pra gerar ytab.h que tem defines é o nosso novo token.h
-
-
-int : var ;
-for 5878 ;
-for 7 ;
-
+	//Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
 */
 
 %{
@@ -57,6 +48,13 @@ void yyerror(char const *s);
 
 %token TOKEN_ERROR 290
 
+%left OPERATOR_AND OPERATOR_OR
+%left OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
+%left '<' '>' '!'
+%left '-' '+'
+%left '*' '/'
+
+
 
 %%
 program : decl
@@ -69,30 +67,35 @@ dec : vardec
 	| fundec
 	;
 
-vardec : TK_IDENTIFIER ':' vartypeandlist '=' lit ';'
-	| TK_IDENTIFIER ':' vartypeandlist ';'
+vardec : TK_IDENTIFIER ':' vartypeandlist
 	;
 
-litlist: lit
-	| lit litlist
-	|
+
+vartypeandlist: KW_BYTE '=' LIT_CHAR ';'
+	| KW_BYTE '=' LIT_INTEGER ';'
+	| KW_SHORT '=' LIT_INTEGER ';'
+	| KW_LONG '=' LIT_INTEGER ';'
+	| KW_FLOAT '=' LIT_REAL ';'
+	| KW_DOUBLE '=' LIT_INTEGER ';'
+	| KW_BYTE '[' LIT_INTEGER ']' charlist
+	| KW_BYTE '[' LIT_INTEGER ']' intlist
+	| KW_SHORT '[' LIT_INTEGER ']' intlist
+	| KW_LONG '[' LIT_INTEGER ']' intlist
+	| KW_FLOAT '[' LIT_INTEGER ']' reallist
+	| KW_DOUBLE '[' LIT_INTEGER ']' intlist
 	;
 
-vartypeandlist: KW_BYTE
-	| KW_SHORT
-	| KW_LONG
-	| KW_FLOAT
-	| KW_DOUBLE
-	| KW_SHORT '[' LIT_INTEGER ']' litlist
-	| KW_LONG '[' LIT_INTEGER ']' litlist
+charlist: LIT_CHAR charlist
+	| ';'
 	;
 
-lit: LIT_INTEGER
-	| LIT_REAL
-	| LIT_CHAR
-	| LIT_STRING
+intlist: LIT_INTEGER intlist
+	| ';'
 	;
 
+reallist: LIT_REAL reallist
+	| ';'
+	;
 
 fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd
 	;
@@ -132,7 +135,6 @@ cmd : atrib
 
 printargs: LIT_STRING ',' printargs
 	| exp ',' printargs
-	| LIT_STRING ',' printargs
 	| LIT_STRING
 	| exp
 
@@ -179,26 +181,3 @@ void yyerror (char const *s) {
 	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);
 	exit(3);
 }
-
-/*
-
-paramlist : param resto
-	|
-	;
-
-
-resto : ',' param resto
-	|
-	;
-
-param : LIT_INTEGER
-	;
-
-
-cmd::::
-
-etapa2 teste.ling
-
-deu um erro no trab dele pq nao tinha "<>" no scanner.l
-faltava + coisa no scanner
-*/

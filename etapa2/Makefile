@@ -1,3 +1,5 @@
+#Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
+
 etapa2: y.tab.o lex.yy.o hash.o main.o
 	gcc -o etapa2 y.tab.o lex.yy.o hash.o main.o
 

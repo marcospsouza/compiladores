@@ -1,3 +1,4 @@
+//Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
 #define HASH_SIZE 977
 
 struct node

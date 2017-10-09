@@ -1,9 +1,12 @@
 %{
+	 
+	//Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
+
 	#include "hash.h"
 	#include "y.tab.h"
 
 	int running = 1;
-	int lineCount = 0;
+	int lineCount = 1;
 %}
 
 %x COMMENT
@@ -25,7 +28,6 @@ read	{return KW_READ;}
 return	{return KW_RETURN;}
 print	{return KW_PRINT;}
 
-[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);yylval.symbol = atoi(yytext);hash_print();return TK_IDENTIFIER;}
 
 (<=)	{return OPERATOR_LE;}
 (>=)	{return OPERATOR_GE;}
@@ -34,6 +36,8 @@ print	{return KW_PRINT;}
 (&&)	{return OPERATOR_AND;}
 (\|\|)	{return OPERATOR_OR;}
 
+
+[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);yylval.symbol = atoi(yytext);hash_print();return TK_IDENTIFIER;}
 
 [,;:\(\)\[\]{}\+\-\*/<>=!&\$#] {return yytext[0];}
 

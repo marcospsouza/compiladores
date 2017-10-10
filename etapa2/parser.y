@@ -48,13 +48,6 @@ void yyerror(char const *s);
 
 %token TOKEN_ERROR 290
 
-%left OPERATOR_AND OPERATOR_OR
-%left OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
-%left '<' '>' '!'
-%left '-' '+'
-%left '*' '/'
-
-
 
 %%
 program : decl

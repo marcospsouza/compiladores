@@ -37,14 +37,14 @@ print	{return KW_PRINT;}
 (\|\|)	{return OPERATOR_OR;}
 
 
-[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{hash_insert(yytext,TK_IDENTIFIER);yylval.symbol = atoi(yytext);hash_print();return TK_IDENTIFIER;}
+[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{yylval.symbol = hash_insert(yytext,TK_IDENTIFIER);return TK_IDENTIFIER;}
 
 [,;:\(\)\[\]{}\+\-\*/<>=!&\$#] {return yytext[0];}
 
-[0-9]*			{hash_insert(yytext,LIT_INTEGER);yylval.symbol = atoi(yytext);hash_print();return LIT_INTEGER;}
-[0-9]*\.[0-9]*	{hash_insert(yytext,LIT_REAL);yylval.symbol = atoi(yytext);hash_print();return LIT_REAL;}
-\'.\'			{hash_insert(yytext,LIT_CHAR);yylval.symbol = atoi(yytext);hash_print();return LIT_CHAR;}
-\"[^\"\n]*\" 	{hash_insert(yytext,LIT_STRING);yylval.symbol = atoi(yytext);hash_print(); return LIT_STRING;}
+[0-9]*			{yylval.symbol = hash_insert(yytext,LIT_INTEGER);return LIT_INTEGER;}
+[0-9]*\.[0-9]*	{yylval.symbol = hash_insert(yytext,LIT_REAL);return LIT_REAL;}
+\'.\'			{yylval.symbol = hash_insert(yytext,LIT_CHAR);return LIT_CHAR;}
+\"[^\"\n]*\" 	{yylval.symbol = hash_insert(yytext,LIT_STRING);return LIT_STRING;}
 
 "//".*
 

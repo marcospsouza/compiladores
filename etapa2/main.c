@@ -10,7 +10,7 @@ extern FILE *yyin;
 
 
 void initMe();
-void yyparse();
+int yyparse();
 
 int main(int argc, char **argv){
 

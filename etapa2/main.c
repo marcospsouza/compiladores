@@ -8,6 +8,10 @@
 
 extern FILE *yyin;
 
+
+void initMe();
+void yyparse();
+
 int main(int argc, char **argv){
 
 	if(argc < 2){

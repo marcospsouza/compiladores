@@ -169,6 +169,8 @@ lcmd : lcmd cmd ';'
 
 
 %%
+int getLineNumber();
+
 
 void yyerror (char const *s) {
 	fprintf (stderr, "Line %d: %s\n",getLineNumber(), s);

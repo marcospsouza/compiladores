@@ -48,12 +48,16 @@ void yyerror(char const *s);
 
 %token TOKEN_ERROR 290
 
+%left OPERATOR_AND OPERATOR_OR '!'
+%left '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
+%left '+' '-'
+%left '*' '/'
 
 %%
 program : decl
 
 decl : dec decl
-	|	
+	|
 	;
 
 dec : vardec
@@ -64,29 +68,24 @@ vardec : TK_IDENTIFIER ':' vartypeandlist
 	;
 
 
-vartypeandlist: KW_BYTE '=' LIT_CHAR ';'
-	| KW_BYTE '=' LIT_INTEGER ';'
-	| KW_SHORT '=' LIT_INTEGER ';'
-	| KW_LONG '=' LIT_INTEGER ';'
-	| KW_FLOAT '=' LIT_REAL ';'
-	| KW_DOUBLE '=' LIT_INTEGER ';'
-	| KW_BYTE '[' LIT_INTEGER ']' charlist
-	| KW_BYTE '[' LIT_INTEGER ']' intlist
-	| KW_SHORT '[' LIT_INTEGER ']' intlist
-	| KW_LONG '[' LIT_INTEGER ']' intlist
-	| KW_FLOAT '[' LIT_INTEGER ']' reallist
-	| KW_DOUBLE '[' LIT_INTEGER ']' intlist
+vartypeandlist: KW_BYTE '=' lit ';'
+	| KW_SHORT '=' lit ';'
+	| KW_LONG '=' lit ';'
+	| KW_FLOAT '=' lit ';'
+	| KW_DOUBLE '=' lit ';'
+	| KW_BYTE '[' LIT_INTEGER ']' litlist
+	| KW_SHORT '[' LIT_INTEGER ']' litlist
+	| KW_LONG '[' LIT_INTEGER ']' litlist
+	| KW_FLOAT '[' LIT_INTEGER ']' litlist
+	| KW_DOUBLE '[' LIT_INTEGER ']' litlist
 	;
 
-charlist: LIT_CHAR charlist
-	| ';'
+lit: LIT_INTEGER
+	| LIT_REAL
+	| LIT_CHAR
 	;
 
-intlist: LIT_INTEGER intlist
-	| ';'
-	;
-
-reallist: LIT_REAL reallist
+litlist: lit litlist
 	| ';'
 	;
 
@@ -94,8 +93,7 @@ fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd
 	;
 
 args: exp ',' args
-	| exp args
-	|
+	| exp
 	;
 
 argsdef: TK_IDENTIFIER ':' vartype ',' argsdef
@@ -133,35 +131,31 @@ atrib : TK_IDENTIFIER '=' exp
 exp : '(' exp ')'
     | TK_IDENTIFIER
     | TK_IDENTIFIER '[' exp ']'
-	| TK_IDENTIFIER '(' args ')'
+    | TK_IDENTIFIER '(' args ')'
     | LIT_INTEGER
     | LIT_CHAR
     | LIT_REAL
-    | exp op exp
+	| exp OPERATOR_LE exp
+	| exp OPERATOR_GE exp
+	| exp OPERATOR_EQ exp
+	| exp OPERATOR_NE exp
+	| exp OPERATOR_AND exp
+	| exp OPERATOR_OR exp
+	| exp '*' exp
+	| exp '/' exp
+	| exp '+' exp
+	| exp '-' exp
+	| exp '>' exp
+	| exp '<' exp
+	| exp '!' exp
 	;
-
-op: OPERATOR_LE
-    | OPERATOR_GE
-    | OPERATOR_EQ
-    | OPERATOR_NE
-    | OPERATOR_AND
-    | OPERATOR_OR
-    | '*'
-    | '/'
-    | '+'
-    | '-'
-    | '>'
-    | '<'
-    | '!' 
-	;  
 
 block : '{' lcmd '}'
 	;
 
-lcmd : lcmd cmd ';'
-	|
+lcmd : cmd ';' lcmd
+	| cmd
 	;
-
 
 
 %%

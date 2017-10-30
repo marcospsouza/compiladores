@@ -79,7 +79,7 @@ program : decl { astPrint($1,0);}
 
 
 
-decl : dec decl { $$ = astCreate(AST_DECL, NULL, $1, $2, 0, 0); }
+decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0); }
 	|	{ $$ = 0; }
 	;
 
@@ -91,16 +91,16 @@ vardec : TK_IDENTIFIER ':' vartypeandlist  { $$ = astCreate(AST_VARDEC, $1, $3, 
 	;
 
 
-vartypeandlist: KW_BYTE '=' lit ';' { $$ = astCreate(AST_VTLIST, NULL, $3, 0, 0, 0); }
-	| KW_SHORT '=' lit ';' { $$ = astCreate(AST_VTLIST, NULL, $3, 0, 0, 0); }
-	| KW_LONG '=' lit ';' { $$ = astCreate(AST_VTLIST, NULL, $3, 0, 0, 0); }
-	| KW_FLOAT '=' lit ';' { $$ = astCreate(AST_VTLIST, NULL, $3, 0, 0, 0); }
-	| KW_DOUBLE '=' lit ';' { $$ = astCreate(AST_VTLIST, NULL, $3, 0, 0, 0); }
-	| KW_BYTE '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, NULL, $3, $5, 0, 0); }
-	| KW_SHORT '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, NULL, $3, $5, 0, 0); }
-	| KW_LONG '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, NULL, $3, $5, 0, 0); }
-	| KW_FLOAT '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, NULL, $3, $5, 0, 0); }
-	| KW_DOUBLE '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, NULL, $3, $5, 0, 0); }
+vartypeandlist: KW_BYTE '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
+	| KW_SHORT '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
+	| KW_LONG '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
+	| KW_FLOAT '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
+	| KW_DOUBLE '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
+	| KW_BYTE '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
+	| KW_SHORT '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
+	| KW_LONG '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
+	| KW_FLOAT '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
+	| KW_DOUBLE '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
 	;
 
 lit: LIT_INTEGER { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }
@@ -115,8 +115,8 @@ litlist: lit litlist { $$ = astCreate(AST_LITLIST, 0, $1, $2, 0, 0); }
 fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd { $$ = astCreate(AST_FUNDEC,$4,$2,0,$6,$8); }
 	;
 
-args: exp ',' args { $$ = astCreate(AST_ARGS,NULL,$1,$3,0,0); }
-	| exp { $$ = astCreate(AST_ARGS,NULL,$1,0,0,0); }
+args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); }
+	| exp { $$ = astCreate(AST_ARGS,0,$1,0,0,0); }
 	;
 
 argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$5,0,0); }  
@@ -139,49 +139,49 @@ block: '(' lcmd')'  { $$ = astCreate(AST_BLOCK,0,$2,0,0,0); }
 
 
 cmd : atrib { $$ = $1; }     
-	| KW_PRINT printargs {$$ = astCreate(AST_KWPRINT, NULL, $2, 0, 0, 0);}
+	| KW_PRINT printargs {$$ = astCreate(AST_KWPRINT, 0, $2, 0, 0, 0);}
 	| KW_READ '>' TK_IDENTIFIER {$$ = astCreate(AST_KWREAD, $3, 0, 0, 0, 0);}
-	| KW_WHILE '(' exp ')' cmd {$$ = astCreate(AST_KWWHILE, NULL, $3, $5, 0, 0);}
-	| KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd {$$ = astCreate(AST_KWIF, NULL, $3, $6, $8, 0);}
-	| KW_IF '(' exp ')' KW_THEN cmd {$$ = astCreate(AST_KWIF, NULL, $3, $6, 0, 0);}
-	| KW_RETURN exp {$$ = astCreate(AST_KWRETURN, NULL, $2, 0, 0, 0);}
+	| KW_WHILE '(' exp ')' cmd {$$ = astCreate(AST_KWWHILE, 0, $3, $5, 0, 0);}
+	| KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd {$$ = astCreate(AST_KWIF, 0, $3, $6, $8, 0);}
+	| KW_IF '(' exp ')' KW_THEN cmd {$$ = astCreate(AST_KWIF, 0, $3, $6, 0, 0);}
+	| KW_RETURN exp {$$ = astCreate(AST_KWRETURN, 0, $2, 0, 0, 0);}
 	| block { $$ = $1; }
 	| {$$ = 0;}
 	;
 
 printargs: LIT_STRING ',' printargs {$$ = astCreate(AST_PRINTARGS, $1, $3, 0, 0, 0);}
-	| exp ',' printargs {$$ = astCreate(AST_PRINTARGS, NULL, $1, $3, 0, 0);}
+	| exp ',' printargs {$$ = astCreate(AST_PRINTARGS, 0, $1, $3, 0, 0);}
 	| LIT_STRING { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
 	| exp {$$ = $1;}
 
 atrib : TK_IDENTIFIER '=' exp { $$ = astCreate(AST_ASSIGN, $1, $3, 0, 0, 0); }
 	| TK_IDENTIFIER '[' exp ']' '=' exp { $$ = astCreate(AST_ASSIGN, $1, $3, $6, 0, 0); }
 
-exp : '(' exp ')' { $$ = astCreate(AST_EXP,NULL,$2,0,0,0); }
+exp : '(' exp ')' { $$ = astCreate(AST_EXP,0,$2,0,0,0); }
     | TK_IDENTIFIER { $$ = astCreate(AST_TKID,$1,0,0,0,0); }
     | TK_IDENTIFIER '[' exp ']' { $$ = astCreate(AST_TKID,$1,$3,0,0,0); }
     | TK_IDENTIFIER '(' args ')' { $$ = astCreate(AST_TKID,$1,$3,0,0,0); }
     | LIT_INTEGER { $$ = astCreate(AST_INT,$1,0,0,0,0); }
     | LIT_CHAR { $$ = astCreate(AST_CHAR,$1,0,0,0,0); }
     | LIT_REAL { $$ = astCreate(AST_REAL,$1,0,0,0,0); }
-	| exp OPERATOR_LE exp { $$ = astCreate(AST_LE,NULL,$1,$3,0,0); }
-	| exp OPERATOR_GE exp { $$ = astCreate(AST_GE,NULL,$1,$3,0,0); }
-	| exp OPERATOR_EQ exp { $$ = astCreate(AST_EQ,NULL,$1,$3,0,0); }
-	| exp OPERATOR_NE exp { $$ = astCreate(AST_NE,NULL,$1,$3,0,0); }
-	| exp OPERATOR_AND exp { $$ = astCreate(AST_AND,NULL,$1,$3,0,0); }
-	| exp OPERATOR_OR exp { $$ = astCreate(AST_OR,NULL,$1,$3,0,0); }
-	| exp '*' exp { $$ = astCreate(AST_MUL,NULL,$1,$3,0,0); }
-	| exp '/' exp { $$ = astCreate(AST_DIV,NULL,$1,$3,0,0); }
-	| exp '+' exp { $$ = astCreate(AST_ADD,NULL,$1,$3,0,0); }
-	| exp '-' exp { $$ = astCreate(AST_SUB,NULL,$1,$3,0,0); }
-	| exp '>' exp { $$ = astCreate(AST_GT,NULL,$1,$3,0,0); }
-	| exp '<' exp { $$ = astCreate(AST_LS,NULL,$1,$3,0,0); }
-	| exp '!' exp { $$ = astCreate(AST_NOT, NULL,$1,$3,0,0); }
+	| exp OPERATOR_LE exp { $$ = astCreate(AST_LE,0,$1,$3,0,0); }
+	| exp OPERATOR_GE exp { $$ = astCreate(AST_GE,0,$1,$3,0,0); }
+	| exp OPERATOR_EQ exp { $$ = astCreate(AST_EQ,0,$1,$3,0,0); }
+	| exp OPERATOR_NE exp { $$ = astCreate(AST_NE,0,$1,$3,0,0); }
+	| exp OPERATOR_AND exp { $$ = astCreate(AST_AND,0,$1,$3,0,0); }
+	| exp OPERATOR_OR exp { $$ = astCreate(AST_OR,0,$1,$3,0,0); }
+	| exp '*' exp { $$ = astCreate(AST_MUL,0,$1,$3,0,0); }
+	| exp '/' exp { $$ = astCreate(AST_DIV,0,$1,$3,0,0); }
+	| exp '+' exp { $$ = astCreate(AST_ADD,0,$1,$3,0,0); }
+	| exp '-' exp { $$ = astCreate(AST_SUB,0,$1,$3,0,0); }
+	| exp '>' exp { $$ = astCreate(AST_GT,0,$1,$3,0,0); }
+	| exp '<' exp { $$ = astCreate(AST_LS,0,$1,$3,0,0); }
+	| exp '!' exp { $$ = astCreate(AST_NOT, 0,$1,$3,0,0); }
 	;
 
 
 
-block : '{' lcmd '}' { $$ = astCreate(AST_BLOCK,NULL,$2,0,0,0); }
+block : '{' lcmd '}' { $$ = astCreate(AST_BLOCK,0,$2,0,0,0); }
 	;
 
 lcmd : cmd ';' lcmd {astPrint($1,0);}   {$$ = astCreate(AST_LCMD,0,$1,$3,0,0);}

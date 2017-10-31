@@ -262,7 +262,7 @@ void printnodeSource(AST *node, FILE *source_code){
 				}
 				break;
 
-	      	case AST_EXP: fprintf(source_code, "vish( ");
+	      	case AST_EXP: fprintf(source_code, "( ");
 	            printnodeSource(node->son[0], source_code);
 	            fprintf(source_code, " )");
 	            break;

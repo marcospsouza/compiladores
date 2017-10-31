@@ -1,5 +1,3 @@
-//operandos filhos do operador
-
 
 #ifndef ASTREE_HEADER
 #define ASTREE_HEADER
@@ -63,18 +61,12 @@
 
 FILE* source_code;
 
-//"se botou $$, precisa de símbolo associado"
 
 typedef struct ast_node{
 	int type;
 	HASH_NODE *symbol;
 	struct ast_node* son[MAX_SONS];
 }AST;
-
-//PROTOTYPES
-
-
-
 
 
 AST* astCreate(int type, HASH_NODE *symbol, AST* son0, AST* son1, AST* son2,AST* son3);

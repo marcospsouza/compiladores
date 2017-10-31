@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #include "hash.h"
-#include "astree.h" //erro idiota nível 2
-#include "y.tab.h" //todo; check if this is necessary
+#include "astree.h" 
+#include "y.tab.h" 
 
 extern FILE *yyin;
 
@@ -16,7 +16,7 @@ int yyparse();
 int main(int argc, char **argv){
 
 	if(argc < 2){
-		printf("Argumentos faltando, informe o nome do arquivo\nChamar ./etapa1 file_name\n");
+		printf("Argumentos faltando, informe o nome do arquivo\nChamar ./etapa1 file_name output_file\n");
 	}
 	else if((yyin = fopen(argv[1], "r")) != NULL){
 		if(source_code = fopen(argv[2],"w+")){
@@ -29,6 +29,6 @@ int main(int argc, char **argv){
 			printf("Nenhum erro de sintaxe\n");
 			exit(0);
 		}
-		else fprintf(stderr, "deu ruim");
+		else fprintf(stderr, "Erro ao criar o arquivo de saída.\n");
 	}
 }

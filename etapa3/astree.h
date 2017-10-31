@@ -3,7 +3,7 @@
 
 #ifndef ASTREE_HEADER
 #define ASTREE_HEADER
-
+#include <stdio.h>
 #define MAX_SONS 4
 
 #define AST_SYMBOL 1
@@ -75,6 +75,8 @@ typedef struct ast_node{
 AST* astCreate(int type, HASH_NODE *symbol, AST* son0, AST* son1, AST* son2,AST* son3);
 void astPrint(AST * node, int level);
 
+void printSource(AST *root);
+void printnodeSource(AST *node, FILE *source_code);
 
 
 #endif

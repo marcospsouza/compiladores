@@ -75,7 +75,7 @@ void yyerror(char const *s);
 
 
 %%
-program : decl { astPrint($1,0);} 
+program : decl { astPrint($1,0); printSource($1);} 
 
 
 
@@ -91,16 +91,8 @@ vardec : TK_IDENTIFIER ':' vartypeandlist  { $$ = astCreate(AST_VARDEC, $1, $3, 
 	;
 
 
-vartypeandlist: KW_BYTE '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
-	| KW_SHORT '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
-	| KW_LONG '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
-	| KW_FLOAT '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
-	| KW_DOUBLE '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $3, 0, 0, 0); }
-	| KW_BYTE '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
-	| KW_SHORT '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
-	| KW_LONG '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
-	| KW_FLOAT '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
-	| KW_DOUBLE '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $3, $5, 0, 0); }
+vartypeandlist: vartype '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $1, $3, 0, 0); }
+	| vartype '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $1, $3, $5, 0); }
 	;
 
 lit: LIT_INTEGER { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }

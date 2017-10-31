@@ -64,6 +64,8 @@ void yyerror(char const *s);
 %type <ast> argsdef
 %type <ast> atrib
 %type <ast> printargs
+%type <ast> tailprint
+%type <ast> argprint
 %type <ast> args
 
 
@@ -141,21 +143,29 @@ cmd : atrib { $$ = $1; }
 	| {$$ = 0;}
 	;
 
-printargs: LIT_STRING ',' printargs {$$ = astCreate(AST_PRINTARGS, $1, $3, 0, 0, 0);}
-	| exp ',' printargs {$$ = astCreate(AST_PRINTARGS, 0, $1, $3, 0, 0);}
-	| LIT_STRING { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
-	| exp {$$ = $1;}
+printargs: argprint tailprint					{ $$ = astCreate(AST_PRINTARGS,0,$1,$2,0,0); }
+	;
+
+tailprint: ',' argprint tailprint			{ $$ = astCreate(AST_PRINTARGS,0,$2,$3,0,0); }
+	|										{ $$ = 0; }
+	;
+
+argprint: exp								{ $$ = $1; }
+	| LIT_STRING						{ $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
+	;
+
 
 atrib : TK_IDENTIFIER '=' exp { $$ = astCreate(AST_ASSIGN, $1, $3, 0, 0, 0); }
 	| TK_IDENTIFIER '[' exp ']' '=' exp { $$ = astCreate(AST_ASSIGN, $1, $3, $6, 0, 0); }
 
 exp : '(' exp ')' { $$ = astCreate(AST_EXP,0,$2,0,0,0); }
-    | TK_IDENTIFIER { $$ = astCreate(AST_TKID,$1,0,0,0,0); }
+    | TK_IDENTIFIER { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
     | TK_IDENTIFIER '[' exp ']' { $$ = astCreate(AST_TKID,$1,$3,0,0,0); }
     | TK_IDENTIFIER '(' args ')' { $$ = astCreate(AST_TKID,$1,$3,0,0,0); }
-    | LIT_INTEGER { $$ = astCreate(AST_INT,$1,0,0,0,0); }
-    | LIT_CHAR { $$ = astCreate(AST_CHAR,$1,0,0,0,0); }
-    | LIT_REAL { $$ = astCreate(AST_REAL,$1,0,0,0,0); }
+    | LIT_INTEGER { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
+    | LIT_STRING { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
+    | LIT_CHAR { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
+    | LIT_REAL { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
 	| exp OPERATOR_LE exp { $$ = astCreate(AST_LE,0,$1,$3,0,0); }
 	| exp OPERATOR_GE exp { $$ = astCreate(AST_GE,0,$1,$3,0,0); }
 	| exp OPERATOR_EQ exp { $$ = astCreate(AST_EQ,0,$1,$3,0,0); }

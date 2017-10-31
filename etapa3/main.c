@@ -19,10 +19,16 @@ int main(int argc, char **argv){
 		printf("Argumentos faltando, informe o nome do arquivo\nChamar ./etapa1 file_name\n");
 	}
 	else if((yyin = fopen(argv[1], "r")) != NULL){
-		initMe();
-		yyparse();
+		if(source_code = fopen(argv[2],"w+")){
+		
+			initMe();
+			yyparse();
 
-		printf("Nenhum erro de sintaxe\n");
-		exit(0);
+
+			fclose(source_code);
+			printf("Nenhum erro de sintaxe\n");
+			exit(0);
+		}
+		else fprintf(stderr, "deu ruim");
 	}
 }

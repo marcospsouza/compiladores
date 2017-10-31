@@ -61,6 +61,7 @@
 
 
 
+FILE* source_code;
 
 //"se botou $$, precisa de símbolo associado"
 

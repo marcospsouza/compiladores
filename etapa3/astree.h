@@ -54,6 +54,7 @@
 #define AST_PRINTARGS 46
 #define AST_ARGS 47
 #define AST_VTLIST 48
+#define AST_VT 49
 
 
 

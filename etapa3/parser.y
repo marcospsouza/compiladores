@@ -91,7 +91,7 @@ vardec : TK_IDENTIFIER ':' vartypeandlist  { $$ = astCreate(AST_VARDEC, $1, $3, 
 	;
 
 
-vartypeandlist: vartype '=' lit ';' { $$ = astCreate(AST_VTLIST, 0, $1, $3, 0, 0); }
+vartypeandlist: vartype '=' lit ';' { $$ = astCreate(AST_VT, 0, $1, $3, 0, 0); }
 	| vartype '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $1, $3, $5, 0); }
 	;
 

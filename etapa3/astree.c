@@ -80,7 +80,8 @@ void astPrint(AST * node,int level){
 			case AST_ASSIGN: fprintf(stderr, "AST_ASSIGN,");break;
 			case AST_PRINTARGS: fprintf(stderr, "AST_PRINTARGS,");break;
 			case AST_ARGS: fprintf(stderr, "AST_ARGS,");break;
-			case AST_VTLIST: fprintf(stderr, "AST_VTLIST,");break;	
+			case AST_VTLIST: fprintf(stderr, "AST_VTLIST,");break;
+			case AST_VT: fprintf(stderr, "AST_VT,");break;
 
 			default: fprintf(stderr, "UNKNOWN\n");break;
 
@@ -112,18 +113,37 @@ void printnodeSource(AST *node, FILE *source_code){
 	if(node){
 		switch(node->type){
 
-			case AST_DECL: printnodeSource(node->son[0], source_code);
-						   printnodeSource(node->son[1], source_code);
-						break;
-			case AST_VARDEC: fprintf(stderr, "%s: ", node->symbol->value);
-					  printnodeSource(node->son[0], source_code);
-					  fprintf(stderr, " = ");
-					  printnodeSource(node->son[1], source_code);
-					  fprintf(stderr, ";\n");
-					  break;
-			case AST_VTLIST: 
-					  fprintf(stderr, ";\n");
-					  break;
+			case AST_DECL: 
+				printnodeSource(node->son[0], source_code);
+				printnodeSource(node->son[1], source_code);
+				break;
+
+			case AST_VARDEC: 
+				fprintf(stderr, "%s: ", node->symbol->value);
+				printnodeSource(node->son[0], source_code);
+				printnodeSource(node->son[1], source_code);
+				fprintf(stderr, ";\n");
+				break;
+
+			case AST_VT:
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, " = ");
+				printnodeSource(node->son[1], source_code);
+				break;
+
+			case AST_VTLIST:		
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, "[");
+				printnodeSource(node->son[1], source_code);
+				fprintf(stderr, "] ");
+				printnodeSource(node->son[2], source_code);	
+				break;
+
+			case AST_LITLIST:
+				printnodeSource(node->son[0], source_code);
+				printnodeSource(node->son[1], source_code);
+				break;
+
 			case AST_SYMBOL: fprintf(stderr, "%s", node->symbol->value);
 					if(node->son[0] != 0){
 						fprintf(stderr, " ");

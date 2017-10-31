@@ -151,8 +151,29 @@ void printnodeSource(AST *node, FILE *source_code){
 					printnodeSource(node->son[0], source_code);
 				}
 				break;
+
+			case AST_FUNCALL:
+				fprintf(stderr, "%s(", node->symbol->value);
+            	printnodeSource(node->son[0], source_code);
+            	fprintf(stderr, ")");
+				break;
+			case AST_VASSIGN:				
+				fprintf(stderr, "%s", node->symbol->value);
+				fprintf(stderr, "[");
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, "] =");
+				printnodeSource(node->son[1], source_code);
+				break;
+
+			case AST_VACCESS:
+				fprintf(stderr, "%s",node->symbol->value );
+				fprintf(stderr, "[");
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, "];");
+				break;
+
 			case AST_FUNDEC: 
-				fprintf(stderr, "\n(");
+				fprintf(stderr, "(");
 				printnodeSource(node->son[0], source_code);
 				fprintf(stderr, ") ");
 				fprintf(stderr, "%s(", node->symbol->value);
@@ -161,22 +182,26 @@ void printnodeSource(AST *node, FILE *source_code){
 				printnodeSource(node->son[3], source_code);
 				fprintf(stderr, "\n");
 				break;
+
+
 			case AST_ARGSDEF: 
-				fprintf(stderr, "%s:", node->son[0]->symbol->value);
-				printnodeSource(node->son[0]->son[0], source_code);
-				if(node->son[1] != 0)
-					printnodeSource(node->son[1], source_code);
+				fprintf(stderr, "%s:", node->symbol->value);
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, ", ");
+				printnodeSource(node->son[1], source_code);
 				break;
+
 			case AST_ARGS: 
-				fprintf(stderr, ", %s:", node->son[0]->symbol->value);
+				fprintf(stderr, "%s, ", node->son[0]->symbol->value);
 				printnodeSource(node->son[0]->son[0], source_code);
 				if(node->son[1] != 0)
 				printnodeSource(node->son[1], source_code);
 				break;
+
 			case AST_BLOCK:
 				fprintf(stderr, "{\n");
 				printnodeSource(node->son[0], source_code);
-			fprintf(stderr, "\n}");
+				fprintf(stderr, "\n}");
 				break;
 			case AST_LCMD: 
 				printnodeSource(node->son[0], source_code);
@@ -188,20 +213,33 @@ void printnodeSource(AST *node, FILE *source_code){
 				fprintf(stderr, "%s=", node->symbol->value);
 				printnodeSource(node->son[0], source_code);
 				break;
-			case AST_KWBYTE: fprintf(stderr, "byte"); break;
-			case AST_KWSHORT: fprintf(stderr, "short"); break;
-			case AST_KWLONG: fprintf(stderr, "long"); break;
-			case AST_KWFLOAT: fprintf(stderr, "float"); break;
-			case AST_KWDOUBLE: fprintf(stderr, "double"); break;
-			case AST_KWREAD: fprintf(stderr, "read > ");
-					fprintf(stderr, "%s", node->symbol->value);
-					break;
-			case AST_KWRETURN: fprintf(stderr, "return ");
-						printnodeSource(node->son[0], source_code);
-					break;
-			case AST_KWPRINT: fprintf(stderr, "print ");
-						printnodeSource(node->son[0], source_code);
-					break;
+			case AST_KWBYTE: 
+				fprintf(stderr, "byte"); 
+				break;
+			case AST_KWSHORT: 
+				fprintf(stderr, "short"); 
+				break;
+			case AST_KWLONG: 
+				fprintf(stderr, "long"); 
+				break;
+			case AST_KWFLOAT: 
+				fprintf(stderr, "float"); 
+				break;
+			case AST_KWDOUBLE: 
+				fprintf(stderr, "double"); 
+				break;
+			case AST_KWREAD: 
+				fprintf(stderr, "read > ");
+				fprintf(stderr, "%s", node->symbol->value);
+				break;
+			case AST_KWRETURN: 
+				fprintf(stderr, "return ");
+				printnodeSource(node->son[0], source_code);
+				break;
+			case AST_KWPRINT: 
+				fprintf(stderr, "print ");
+				printnodeSource(node->son[0], source_code);
+				break;
 
 			case AST_PRINTARGS: 
 				printnodeSource(node->son[0], source_code);
@@ -210,78 +248,88 @@ void printnodeSource(AST *node, FILE *source_code){
 					printnodeSource(node->son[1], source_code);
 				}
 				break;
-			case AST_KWIF: fprintf(stderr, "if (");
-						printnodeSource(node->son[0], source_code);
-						fprintf(stderr, ") then\n\t");
-						printnodeSource(node->son[1], source_code);
-						fprintf(stderr, "\n");
-						if(node->son[2] != 0){
-							fprintf(stderr, "else\n\t");
-							printnodeSource(node->son[2], source_code);
-						}
-					break;
-			case AST_KWWHILE: fprintf(stderr, "while (");
-						printnodeSource(node->son[0], source_code);
-						fprintf(stderr, ")\n\t");
-						printnodeSource(node->son[1], source_code);
-					break;
-      case AST_ADD: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " + ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_SUB: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " - ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_MUL: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " * ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_DIV: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " / ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_LS: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " < ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_GT: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " > ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_NOT: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " ! ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_LE: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " <= ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_GE: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " >= ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_EQ: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " == ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_NE: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " != ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_AND: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " && ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_OR: printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " || ");
-            printnodeSource(node->son[1], source_code);
-            break;
-      case AST_EXP: fprintf(stderr, "( ");
-            printnodeSource(node->son[0], source_code);
-            fprintf(stderr, " )");
-            break;
+			case AST_KWIF: 
+				fprintf(stderr, "if (");
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, ") then\n\t");
+				printnodeSource(node->son[1], source_code);
+				fprintf(stderr, "\n");
+				if(node->son[2] != 0){
+					fprintf(stderr, "else\n\t");
+					printnodeSource(node->son[2], source_code);
+				}
+				break;
 
+	      	case AST_EXP: fprintf(stderr, "vish( ");
+	            printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " )");
+	            break;
+
+	        /*case AST_KWFOR: 
+				fprintf(stderr, "for (");
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, ")\n\t");
+				printnodeSource(node->son[1], source_code);
+				break;*/
+
+			case AST_KWWHILE: 
+				fprintf(stderr, "while (");
+				printnodeSource(node->son[0], source_code);
+				fprintf(stderr, ")\n\t");
+				printnodeSource(node->son[1], source_code);
+				break;
+	      	case AST_ADD: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " + ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_SUB: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " - ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_MUL: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " * ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_DIV: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " / ");
+	            printnodeSource(node->son[1], source_code);
+	            break;	      	
+	        case AST_LE: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " <= ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_GE: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " >= ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_EQ: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " == ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_NE: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " != ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_AND: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " && ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+			case AST_OR: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " || ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_LS: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " < ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_GT: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " > ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
+	      	case AST_NOT: printnodeSource(node->son[0], source_code);
+	            fprintf(stderr, " ! ");
+	            printnodeSource(node->son[1], source_code);
+	            break;
 
 			default: fputs("UNKNOWN", source_code); break;
 		}

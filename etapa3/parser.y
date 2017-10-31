@@ -156,12 +156,12 @@ argprint: exp								{ $$ = $1; }
 
 
 atrib : TK_IDENTIFIER '=' exp { $$ = astCreate(AST_ASSIGN, $1, $3, 0, 0, 0); }
-	| TK_IDENTIFIER '[' exp ']' '=' exp { $$ = astCreate(AST_ASSIGN, $1, $3, $6, 0, 0); }
+	| TK_IDENTIFIER '[' exp ']' '=' exp { $$ = astCreate(AST_VASSIGN, $1, $3, $6, 0, 0); }
 
 exp : '(' exp ')' { $$ = astCreate(AST_EXP,0,$2,0,0,0); }
     | TK_IDENTIFIER { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
-    | TK_IDENTIFIER '[' exp ']' { $$ = astCreate(AST_TKID,$1,$3,0,0,0); }
-    | TK_IDENTIFIER '(' args ')' { $$ = astCreate(AST_TKID,$1,$3,0,0,0); }
+    | TK_IDENTIFIER '[' exp ']' { $$ = astCreate(AST_VACCESS,$1,$3,0,0,0); }
+    | TK_IDENTIFIER '(' args ')' { $$ = astCreate(AST_FUNCALL,$1,$3,0,0,0); }
     | LIT_INTEGER { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
     | LIT_STRING { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }
     | LIT_CHAR { $$ = astCreate(AST_SYMBOL,$1,0,0,0,0); }

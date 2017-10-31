@@ -23,7 +23,7 @@ d: byte = 65;
     i = i + 1
     };
   print "Incrementado algumas vezes fica ",a,"\n";
-  if (a==5) then 
+  if (a==5 && i == 2) then 
     { print "Parou no meio\n"; };
   if (a==11) then
     ;

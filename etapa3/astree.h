@@ -55,6 +55,9 @@
 #define AST_ARGS 47
 #define AST_VTLIST 48
 #define AST_VT 49
+#define AST_FUNCALL 50
+#define AST_VASSIGN 51
+#define AST_VACCESS 52
 
 
 

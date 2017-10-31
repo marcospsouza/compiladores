@@ -187,15 +187,19 @@ void printnodeSource(AST *node, FILE *source_code){
 			case AST_ARGSDEF: 
 				fprintf(stderr, "%s:", node->symbol->value);
 				printnodeSource(node->son[0], source_code);
-				fprintf(stderr, ", ");
-				printnodeSource(node->son[1], source_code);
+				if(node->son[1] != 0){
+					fprintf(stderr, ", ");
+					printnodeSource(node->son[1], source_code);
+				}
 				break;
 
 			case AST_ARGS: 
-				fprintf(stderr, "%s, ", node->son[0]->symbol->value);
+				fprintf(stderr, "%s ", node->son[0]->symbol->value);
 				printnodeSource(node->son[0]->son[0], source_code);
-				if(node->son[1] != 0)
-				printnodeSource(node->son[1], source_code);
+				if(node->son[1] != 0){
+					fprintf(stderr, ", ");
+					printnodeSource(node->son[1], source_code);
+				}
 				break;
 
 			case AST_BLOCK:

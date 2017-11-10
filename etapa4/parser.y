@@ -69,6 +69,8 @@ void yyerror(char const *s);
 %type <ast> args
 
 
+%type<ast> type
+
 
 %left OPERATOR_AND OPERATOR_OR '!'
 %left '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
@@ -106,6 +108,8 @@ litlist: lit litlist { $$ = astCreate(AST_LITLIST, 0, $1, $2, 0, 0); }
 	| ';' {$$ = 0;}
 	;
 
+
+
 fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd { $$ = astCreate(AST_FUNDEC,$4,$2,0,$6,$8); }
 	;
 
@@ -117,6 +121,18 @@ argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$
 	| TK_IDENTIFIER ':' vartype argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$4,0,0); }  
 	|	{ $$ = 0; }
 	;
+
+
+type: KW_INT {$$ = astCreat {AST_TYPEINT,0,0,0,0,0};}
+	| KW_CHAR {$$ = astCreat {AST_TYPECHAR,0,0,0,0,0};}
+	;
+
+
+
+
+
+
+
 
 
 vartype: KW_BYTE  { $$ = astCreate(AST_KWBYTE,0,0,0,0,0); }
@@ -186,7 +202,7 @@ exp : '(' exp ')' { $$ = astCreate(AST_EXP,0,$2,0,0,0); }
 block : '{' lcmd '}' { $$ = astCreate(AST_BLOCK,0,$2,0,0,0); }
 	;
 
-lcmd : cmd ';' lcmd {astPrint($1,0);}   {$$ = astCreate(AST_LCMD,0,$1,$3,0,0);}
+lcmd : cmd ';' lcmd    {$$ = astCreate(AST_LCMD,0,$1,$3,0,0);}
 	| cmd {$$ = $1;}
 	;
 

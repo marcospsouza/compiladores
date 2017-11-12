@@ -13,8 +13,25 @@ void semanticSetTypes(AST* node){
 		}
 		else{
 			node->symbol->tk_type = SYMBOL_VAR;
-			if(node->son[0]->type == AST_CHAR) node->type = DATATYPE_CHAR;
-			if(node->son[0]->type == AST_INT) node->type = DATATYPE_INT;
+			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+		}
+	}
+	if(node->type == AST_VECDEC){
+		if(node->symbol->tk_type != SYMBOL_ID){
+			fprintf(stderr,"semantic error: identifier %s, already declared \n",node->symbol->value);
+			exit(4); //deve vir depois, aqui cotinuar aserjaweirjaeijrieajriejrijeirj
+		}
+		else{
+			node->symbol->tk_type = SYMBOL_VEC;
+			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
 		}
 	}
 	if (node->type == AST_FUNDEC){
@@ -24,8 +41,25 @@ void semanticSetTypes(AST* node){
 		}
 		else{
 			node->symbol->tk_type = SYMBOL_FUN;
-			if(node->son[0]->type == AST_CHAR) node->type = DATATYPE_CHAR;
-			if(node->son[0]->type == AST_INT) node->type = DATATYPE_INT;
+			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+		}
+	}
+	if(node->type == AST_ARGSDEF){
+		if(node->symbol->tk_type != SYMBOL_ID){
+			fprintf(stderr, "Semantic ERROR: identifier %s already declared\n", node->symbol->value);
+			exit(4);
+		}
+		else{
+			node->symbol->tk_type = SYMBOL_VAR;
+			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
 		}
 	}
 
@@ -46,7 +80,7 @@ void semanticCheckUndeclared(void){
 
 void semanticCheckUsage(AST* node){
 	int i;
-	if (!node) return;
+	/*if (!node) return;
 	//process this node
 
 	//check left-hand side for scalar 
@@ -59,7 +93,7 @@ void semanticCheckUsage(AST* node){
 
 	//check right-hand side for scalar 
 	if(node->type == AST_SYMBOL){
-		if(node->symbol->tk_type != SYMBOL_VAR && node->symbol->tk_type != SYMBOL_LIT_INT){ //nao tem isso aqui no nosso
+		if(node->symbol->tk_type != SYMBOL_VAR && (node->symbol->tk_type != SYMBOL_LIT_INT || node->symbol->tk_type!= SYMBOL_LIT_CHAR)){ //nao tem isso aqui no nosso
 			fprintf(stderr, "Semantic ERROR: identifier %s must be scalar\n", node->symbol->value);
 			exit(4);
 		}
@@ -79,7 +113,7 @@ void semanticCheckUsage(AST* node){
 	for (i=0; i<MAX_SONS; ++i){
 		semanticCheckUsage(node->son[i]);
 	}
-
+*/
 }
 void semanticCheckOperands(AST* node){
 	int i;

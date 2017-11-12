@@ -4,16 +4,20 @@
 
 
 #define SYMBOL_LIT_INT 1
-#define SYMBOL_ID 2
-#define SYMBOL_LIT_STRING 3
+#define SYMBOL_LIT_CHAR 2
+#define SYMBOL_ID 3
+#define SYMBOL_LIT_STRING 4
 
 
-#define SYMBOL_VAR 4
-#define SYMBOL_VEC 5
-#define SYMBOL_FUN 6
+#define SYMBOL_VAR 5
+#define SYMBOL_VEC 6
+#define SYMBOL_FUN 7
 
-#define DATATYPE_INT 1
-#define DATATYPE_CHAR 2
+#define DATATYPE_BYTE 20
+#define DATATYPE_SHORT 21
+#define DATATYPE_LONG 22
+#define DATATYPE_FLOAT 23
+#define DATATYPE_DOUBLE 24
 //substitui todos os id's por esses caras aqui
 
 struct node

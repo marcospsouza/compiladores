@@ -57,8 +57,7 @@
 #define AST_VASSIGN 51
 #define AST_VACCESS 52
 #define AST_GREATER 53
-
-
+#define AST_VECDEC 54
 
 
 

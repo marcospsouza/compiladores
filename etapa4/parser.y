@@ -57,7 +57,6 @@ void yyerror(char const *s);
 %type <ast> dec
 %type <ast> vardec
 %type <ast> fundec
-%type <ast> vartypeandlist
 %type <ast> lit
 %type <ast> litlist
 %type <ast> vartype
@@ -82,7 +81,9 @@ program : decl { astPrint($1,0); printSource($1);}
 
 
 decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0);
-					semanticSetTypes($1); }
+					semanticSetTypes($1);
+					semanticCheckUsage($1);
+					semanticCheckOperands($1); }
 	|	{ $$ = 0; }
 	;
 
@@ -90,12 +91,8 @@ dec : vardec { $$ = $1; }
 	| fundec { $$ = $1; } 
 	;
 
-vardec : TK_IDENTIFIER ':' vartypeandlist  { $$ = astCreate(AST_VARDEC, $1, $3, 0, 0, 0); }
-	;
-
-
-vartypeandlist: vartype '=' lit ';' { $$ = astCreate(AST_VT, 0, $1, $3, 0, 0); }
-	| vartype '[' lit ']' litlist { $$ = astCreate(AST_VTLIST, 0, $1, $3, $5, 0); }
+vardec : TK_IDENTIFIER ':' vartype '=' lit ';' { $$ = astCreate(AST_VARDEC, $1, $3, $5, 0, 0); }
+	| TK_IDENTIFIER ':' vartype '[' lit ']' litlist {$$ = astCreate(AST_VECDEC, $1, $3, $5, $7, 0); }
 	;
 
 lit: LIT_INTEGER { $$ = astCreate(AST_SYMBOL, $1, 0, 0, 0, 0); }
@@ -131,7 +128,7 @@ vartype: KW_BYTE  { $$ = astCreate(AST_KWBYTE,0,0,0,0,0); }
 
 
 
-block: '(' lcmd')'  { $$ = astCreate(AST_BLOCK,0,$2,0,0,0); }
+block: '(' lcmd ')'  { $$ = astCreate(AST_BLOCK,0,$2,0,0,0); }
 	;
 
 

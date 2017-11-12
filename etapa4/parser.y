@@ -76,14 +76,15 @@ void yyerror(char const *s);
 
 
 %%
-program : decl { astPrint($1,0); printSource($1);} 
-
-
-
-decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0);
+program : decl { astPrint($1,0); printSource($1);
 					semanticSetTypes($1);
 					semanticCheckUsage($1);
-					semanticCheckOperands($1); }
+					//semanticCheckOperands($1); 
+				} 
+
+
+
+decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0);}
 	|	{ $$ = 0; }
 	;
 

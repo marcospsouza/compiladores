@@ -80,7 +80,7 @@ void semanticCheckUndeclared(void){
 
 void semanticCheckUsage(AST* node){
 	int i;
-	/*if (!node) return;
+	if (!node) return;
 	//process this node
 
 	//check left-hand side for scalar 
@@ -90,9 +90,8 @@ void semanticCheckUsage(AST* node){
 			exit(4);
 		}
 	}
-
 	//check right-hand side for scalar 
-	if(node->type == AST_SYMBOL){
+/*	if(node->type == AST_SYMBOL){
 		if(node->symbol->tk_type != SYMBOL_VAR && (node->symbol->tk_type != SYMBOL_LIT_INT || node->symbol->tk_type!= SYMBOL_LIT_CHAR)){ //nao tem isso aqui no nosso
 			fprintf(stderr, "Semantic ERROR: identifier %s must be scalar\n", node->symbol->value);
 			exit(4);
@@ -107,13 +106,12 @@ void semanticCheckUsage(AST* node){
 			exit(4); //isso deveria ser uma flag global pra mostrar erro na main, e não uma parada de erro realmente
 		}
 	}
-
-
+*/
 
 	for (i=0; i<MAX_SONS; ++i){
 		semanticCheckUsage(node->son[i]);
 	}
-*/
+
 }
 void semanticCheckOperands(AST* node){
 	int i;

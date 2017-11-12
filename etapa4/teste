@@ -12,7 +12,7 @@ d: byte = 65;
 
 (long) main()
   {
-  a = print "dsadas";
+  a = v[2];
   v[2] = v[10-1];
 
   print " Digite um numero: \n";

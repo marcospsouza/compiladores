@@ -83,17 +83,16 @@ void semanticCheckUsage(AST* node){
 	if (!node) return;
 	//process this node
 
-	//check left-hand side for scalar 
 	if(node->type == AST_ASSIGN){
 		if(node->symbol->tk_type != SYMBOL_VAR){
-			fprintf(stderr, "Semantic ERROR: identifier %s must be scalar\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR: identifier %s must be a variable\n", node->symbol->value);
 			exit(4);
 		}
 	}
-	//check right-hand side for scalar 
-/*	if(node->type == AST_SYMBOL){
-		if(node->symbol->tk_type != SYMBOL_VAR && (node->symbol->tk_type != SYMBOL_LIT_INT || node->symbol->tk_type!= SYMBOL_LIT_CHAR)){ //nao tem isso aqui no nosso
-			fprintf(stderr, "Semantic ERROR: identifier %s must be scalar\n", node->symbol->value);
+
+	if(node->type == AST_VASSIGN || node->type == AST_VACCESS){
+		if(node->symbol->tk_type != SYMBOL_VEC){ //nao tem isso aqui no nosso
+			fprintf(stderr, "Semantic ERROR: identifier %s must be a vector\n", node->symbol->value);
 			exit(4);
 		}
 	}
@@ -102,11 +101,10 @@ void semanticCheckUsage(AST* node){
 	//check if functions calls are calling functions
 	if(node->type == AST_FUNCALL){
 		if(node->symbol->tk_type != SYMBOL_FUN){ //tem que informar numero da linha que? agora o get lliine number daria sempre eof
-			fprintf(stderr, "Semantic ERROR: identifier %s must be scalar\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR: identifier %s must be a function\n", node->symbol->value);
 			exit(4); //isso deveria ser uma flag global pra mostrar erro na main, e não uma parada de erro realmente
 		}
 	}
-*/
 
 	for (i=0; i<MAX_SONS; ++i){
 		semanticCheckUsage(node->son[i]);

@@ -6,12 +6,12 @@
 #define semantic_h
 
 #include <stdio.h>
-#include "./hash.h"
-#include "./astree.h"
+#include "hash.h"
+#include "astree.h"
 
 
 void semanticSetTypes(AST* node) ; //recursiva
-void semanticCheckUndeclared(void);v
+void semanticCheckUndeclared(void);
 void semanticCheckUsage(AST* node);
 void semanticCheckOperands(AST* node);
 

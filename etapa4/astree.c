@@ -71,6 +71,9 @@ void astPrint(AST * node,int level){
 			case AST_DEC: fprintf(stderr, "AST_DEC,");break;
 			case AST_VARDEC: fprintf(stderr, "AST_VARDEC,");break;
 			case AST_FUNDEC: fprintf(stderr, "AST_FUNDEC,");break;
+			case AST_FUNCALL: fprintf(stderr, "AST_FUNCALL,");break;
+			case AST_VASSIGN: fprintf(stderr, "AST_VASSIGN,");break;
+			case AST_VACCESS: fprintf(stderr, "AST_VACCESS,");break;
 			case AST_VTL: fprintf(stderr, "AST_VTL,");break;	
 
 			case AST_LIT: fprintf(stderr, "AST_LIT,");break;

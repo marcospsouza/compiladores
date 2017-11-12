@@ -69,8 +69,6 @@ void yyerror(char const *s);
 %type <ast> args
 
 
-%type<ast> type
-
 
 %left OPERATOR_AND OPERATOR_OR '!'
 %left '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_NE
@@ -83,7 +81,8 @@ program : decl { astPrint($1,0); printSource($1);}
 
 
 
-decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0); }
+decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0);
+					semanticSetTypes($1); }
 	|	{ $$ = 0; }
 	;
 
@@ -121,18 +120,6 @@ argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$
 	| TK_IDENTIFIER ':' vartype argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$4,0,0); }  
 	|	{ $$ = 0; }
 	;
-
-
-type: KW_INT {$$ = astCreat {AST_TYPEINT,0,0,0,0,0};}
-	| KW_CHAR {$$ = astCreat {AST_TYPECHAR,0,0,0,0,0};}
-	;
-
-
-
-
-
-
-
 
 
 vartype: KW_BYTE  { $$ = astCreate(AST_KWBYTE,0,0,0,0,0); }

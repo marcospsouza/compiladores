@@ -42,6 +42,7 @@ void astPrint(AST * node,int level){
 			case AST_GE: fprintf(stderr, "AST_GE,");break;
 			case AST_EQ: fprintf(stderr, "AST_EQ,");break;			
 			case AST_NE: fprintf(stderr, "AST_NE,");break;
+			case AST_OR: fprintf(stderr, "AST_OR, ");break;
 			case AST_AND: fprintf(stderr, "AST_AND,");break;
 			case AST_INT: fprintf(stderr, "AST_INT,");break;
 			case AST_CHAR: fprintf(stderr, "AST_CHAR,");break;

@@ -117,19 +117,23 @@ void semanticCheckOperands(AST* node){
 	//process this node
 
 	//check operands of arithmetical operators
-	if (node->type == AST_ADD ||node->type == AST_MUL){
+	if (node->type == AST_ADD || node->type == AST_SUB || node->type == AST_MUL || node->type == AST_DIV){
 		//check first operand
-		if(node->son[0]->type == AST_GREATER){
+		if(node->son[0]->type == AST_GT || node->son[0]->type == AST_LS || node->son[0]->type == AST_GE || node->son[0]->type == AST_LE
+			|| node->son[0]->type == AST_NE || node->son[0]->type == AST_EQ || node->son[0]->type == AST_OR || node->son[0]->type == AST_AND
+			|| node->son[0]->type == AST_NOT){
 
-			fprintf(stderr, "Semantic ERROR: left operand of cannot be >\n");
+			fprintf(stderr, "Semantic ERROR: left operand of cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n");
 			exit(4);
 
 
 		}
 		//check seconds operand
-		if(node->son[1]->type == AST_GREATER){
+		if(node->son[1]->type == AST_GT || node->son[1]->type == AST_LS || node->son[1]->type == AST_GE || node->son[1]->type == AST_LE
+			|| node->son[1]->type == AST_NE || node->son[1]->type == AST_EQ || node->son[1]->type == AST_OR || node->son[1]->type == AST_AND
+			|| node->son[1]->type == AST_NOT){
 
-			fprintf(stderr, "Semantic ERROR: right operand of cannot be >\n");
+			fprintf(stderr, "Semantic ERROR: right operand of cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n");
 			exit(4);
 
 

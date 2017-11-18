@@ -136,7 +136,7 @@ void printnodeSource(AST *node, FILE *source_code){
 					fprintf(source_code, " ");
 					printnodeSource(node->son[2], source_code);
 				}
-				fprintf(source_code, "\n");
+				fprintf(source_code, ";\n");
 				break;
 			case AST_LITLIST:
 				printnodeSource(node->son[0], source_code);

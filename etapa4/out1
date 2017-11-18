@@ -5,7 +5,7 @@ mat: long[10];
 f: float = 10.55;
 c: byte = 'x';
 d: byte = 65;
-(long) main(a:short, g:long){
+(long) main(r:short, g:long){
 a=v[3 + 2];
 v[2] =v[10 - 1];
 print " Digite um numero: \n";

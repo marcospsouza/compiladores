@@ -9,7 +9,7 @@ void semanticSetTypes(AST* node){
 	//process this node
 	if(node->type == AST_VARDEC){
 		if(node->symbol->tk_type != SYMBOL_ID){
-			fprintf(stderr,"semantic error: identifier %s, already declared \n",node->symbol->value);
+			fprintf(stderr,"Semantic ERROR on line %d: identifier %s, already declared \n",  node->node_line,node->symbol->value);
 			exit(4); //deve vir depois, aqui cotinuar aserjaweirjaeijrieajriejrijeirj
 		}
 		else{
@@ -23,7 +23,7 @@ void semanticSetTypes(AST* node){
 	}
 	if(node->type == AST_VECDEC){
 		if(node->symbol->tk_type != SYMBOL_ID){
-			fprintf(stderr,"semantic error: identifier %s, already declared \n",node->symbol->value);
+			fprintf(stderr,"Semantic ERROR on line %d: identifier %s, already declared \n", node->node_line,node->symbol->value);
 			exit(4); //deve vir depois, aqui cotinuar aserjaweirjaeijrieajriejrijeirj
 		}
 		else{
@@ -37,7 +37,7 @@ void semanticSetTypes(AST* node){
 	}
 	if (node->type == AST_FUNDEC){
 		if(node->symbol->tk_type != SYMBOL_ID){
-			fprintf(stderr, "Semantic ERROR: identifier %s already declared\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR on line %d: identifier %s already declared\n", node->node_line, node->symbol->value);
 			exit(4);
 		}
 		else{
@@ -51,7 +51,7 @@ void semanticSetTypes(AST* node){
 	}
 	if(node->type == AST_ARGSDEF){
 		if(node->symbol->tk_type != SYMBOL_ID){
-			fprintf(stderr, "Semantic ERROR: identifier %s already declared\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR on line %d: identifier %s already declared\n", node->node_line, node->symbol->value);
 			exit(4);
 		}
 		else{
@@ -72,9 +72,18 @@ void semanticSetTypes(AST* node){
 
 }
 
-
 void semanticCheckUndeclared(void){
 
+	HASH_NODE *n;
+
+	for(int i = 0; i < HASH_SIZE; i++){
+		for(n = table[i]; n != NULL; n = n->next){
+			if(n->tk_type == SYMBOL_ID){
+				fprintf(stderr, "Semantic ERROR on line %d: identifier %s undeclared\n",n->node_line, n->value);
+				exit(4);
+			}
+		}
+	}
 	//hashCheckUndeclared();
 
 }
@@ -86,21 +95,21 @@ void semanticCheckUsage(AST* node){
 
 	if(node->type == AST_ASSIGN){
 		if(node->symbol->tk_type != SYMBOL_VAR){
-			fprintf(stderr, "Semantic ERROR: identifier %s must be a variable\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR on line %d: identifier %s must be a variable\n", node->node_line, node->symbol->value);
 			exit(4);
 		}
 	}
 
 	if(node->type == AST_VASSIGN || node->type == AST_VACCESS){
 		if(node->symbol->tk_type != SYMBOL_VEC){ //nao tem isso aqui no nosso
-			fprintf(stderr, "Semantic ERROR: identifier %s must be a vector\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR on line %d: identifier %s must be a vector\n", node->node_line, node->symbol->value);
 			exit(4);
 		}
 		//se a leitura ou escrita estiver sendo feita realmente em um vetor, checa se o indice é válido
 		else{
 			//percorre a árvore e checa se resultado é int, ACESSO A VETOR SOMENTE COM INT (byte, short, long e literais char, int)
 			if (!checkInt(node->son[0])){
-				fprintf(stderr, "Semantic ERROR: vector index must be an integer\n", node->symbol->value);
+				fprintf(stderr, "Semantic ERROR on line %d: vector index must be an integer\n", node->node_line, node->symbol->value);
 			}
 		}
 	}
@@ -108,7 +117,7 @@ void semanticCheckUsage(AST* node){
 	//tem que fazer umas correção autista de numero de linha
 	if(node->type == AST_FUNCALL){
 		if(node->symbol->tk_type != SYMBOL_FUN){ //tem que informar numero da linha que? agora o get lliine number daria sempre eof
-			fprintf(stderr, "Semantic ERROR: identifier %s must be a function\n", node->symbol->value);
+			fprintf(stderr, "Semantic ERROR on line %d: identifier %s must be a function\n", node->node_line, node->symbol->value);
 			exit(4); //isso deveria ser uma flag global pra mostrar erro na main, e não uma parada de erro realmente
 		}
 		//checar argumentos da funçao AINDA NUM FIZ ISSO
@@ -137,7 +146,7 @@ void semanticCheckOperands(AST* node){
 			|| node->son[0]->type == AST_NE || node->son[0]->type == AST_EQ || node->son[0]->type == AST_OR || node->son[0]->type == AST_AND
 			|| node->son[0]->type == AST_NOT){
 
-			fprintf(stderr, "Semantic ERROR: left operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n");
+			fprintf(stderr, "Semantic ERROR on line %d: left operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
 		//check second operand
@@ -145,7 +154,7 @@ void semanticCheckOperands(AST* node){
 			|| node->son[1]->type == AST_NE || node->son[1]->type == AST_EQ || node->son[1]->type == AST_OR || node->son[1]->type == AST_AND
 			|| node->son[1]->type == AST_NOT){
 
-			fprintf(stderr, "Semantic ERROR: right operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n");
+			fprintf(stderr, "Semantic ERROR on line %d: right operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
 	}
@@ -153,12 +162,12 @@ void semanticCheckOperands(AST* node){
 	if (node->type == AST_ADD || node->type == AST_MUL){
 		//check first operand
 		if(node->son[0]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR: left operand of cannot be >\n");
+			fprintf(stderr, "Semantic ERROR on line %d: left operand of cannot be >\n",node->node_line);
 			exit(4);
 		}
 		//check second operand
 		if(node->son[1]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR: right operand of cannot be >\n");
+			fprintf(stderr, "Semantic ERROR on line %d: right operand of cannot be >\n",node->node_line);
 			exit(4);		
 		}
 	}
@@ -166,12 +175,12 @@ void semanticCheckOperands(AST* node){
 	if (node->type == AST_ADD || node->type == AST_MUL){
 		//check first operand
 		if(node->son[0]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR: left operand of cannot be >\n");
+			fprintf(stderr, "Semantic ERROR on line %d: left operand of cannot be >\n",node->node_line);
 			exit(4);
 		}
 		//check seconds operand
 		if(node->son[1]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR: right operand of cannot be >\n");
+			fprintf(stderr, "Semantic ERROR on line %d: right operand of cannot be >\n", node->node_line);
 			exit(4);
 		}
 	}

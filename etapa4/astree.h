@@ -66,6 +66,7 @@ FILE* source_code;
 
 typedef struct ast_node{
 	int type;
+	int node_line;
 	HASH_NODE *symbol;
 	struct ast_node* son[MAX_SONS];
 }AST;

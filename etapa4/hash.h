@@ -23,7 +23,8 @@
 struct node
 {
 	char *value; //*text
-	int tk_type; //type                                                                                               
+	int tk_type; //type
+	int node_line;                                                                                           
 	struct node *next;
 };
 

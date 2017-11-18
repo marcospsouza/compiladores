@@ -10,8 +10,9 @@ c: byte = 'x';
 d: byte = 65;
 //a = 5;
 
-(long) main(r: short, g: long)
+(long) main(a: short, g: long)
   {
+  //l = 2;
   a = v[3 + 2];
   v[2] = v[10-1];
 

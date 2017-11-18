@@ -78,6 +78,7 @@ void yyerror(char const *s);
 %%
 program : decl { astPrint($1,0); printSource($1);
 					semanticSetTypes($1);
+					semanticCheckUndeclared();
 					semanticCheckUsage($1);
 					//semanticCheckOperands($1); 
 				} 

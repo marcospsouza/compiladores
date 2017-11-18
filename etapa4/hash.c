@@ -53,7 +53,7 @@ HASH_NODE *hash_insert (char *text, int type){
 	newnode = (HASH_NODE *) malloc (sizeof(HASH_NODE));
 	newnode->value = (char *) malloc (sizeof(char)*strlen(text));
 	strcpy(newnode->value, text);
-        
+    newnode->node_line = getLineNumber();
 	newnode->tk_type = type;
 	newnode->next = table[address];
 	table[address] = newnode;

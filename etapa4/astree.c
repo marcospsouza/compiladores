@@ -11,6 +11,7 @@ AST* astCreate(int type, HASH_NODE *symbol, AST* son0, AST* son1, AST* son2,AST*
 	AST* newnode;
 	newnode =  (AST*)calloc(1,sizeof(AST));
 	newnode->type = type;
+	newnode->node_line = getLineNumber();
 	newnode->symbol = symbol;
 	newnode->son[0]= son0;
 	newnode->son[1]= son1;

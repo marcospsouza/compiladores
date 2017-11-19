@@ -2,12 +2,12 @@
 #define HASH_SIZE 977
 
 
-
+/*nao tamo usando esses aqui
 #define SYMBOL_LIT_INT 1
 #define SYMBOL_LIT_CHAR 2
 #define SYMBOL_ID 3
 #define SYMBOL_LIT_STRING 4
-
+*/
 
 #define SYMBOL_VAR 5
 #define SYMBOL_VEC 6

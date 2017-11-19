@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "hash.h"
 #include "astree.h"
+#include "y.tab.h"
 
 
 
@@ -21,13 +22,12 @@ int checkArgs(AST* node, char* func_name);
 typedef struct func_info{
 	HASH_NODE *func;
 	int n_parameters;
-	int type_parameters[20]; //type
 	                                                                                           
 	struct func_info* next;
 
 }FUNC_INFO;
 
-
+//lista encadeada usada para armazenar informações das declarações (nome, numero de parametros, etc)
 typedef struct func_list{
 	FUNC_INFO* head;
 	FUNC_INFO* tail;

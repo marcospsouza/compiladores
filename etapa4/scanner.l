@@ -38,11 +38,11 @@ print	{return KW_PRINT;}
 (\|\|)	{return OPERATOR_OR;}
 
 
-[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{yylval.symbol = hash_insert(yytext,SYMBOL_ID);return TK_IDENTIFIER;}
+[a-zA-Z_]([a-zA-Z_0-9 ]*[a-zA-Z_0-9])?	{yylval.symbol = hash_insert(yytext,TK_IDENTIFIER);return TK_IDENTIFIER;}
 
 [,;:\(\)\[\]{}\+\-\*/<>=!&\$#] {return yytext[0];}
 
-[0-9]*			{yylval.symbol = hash_insert(yytext,SYMBOL_LIT_INT);return LIT_INTEGER;}
+[0-9]*			{yylval.symbol = hash_insert(yytext,LIT_INTEGER);return LIT_INTEGER;}
 [0-9]*\.[0-9]*	{yylval.symbol = hash_insert(yytext,LIT_REAL);return LIT_REAL;}
 \'.\'			{yylval.symbol = hash_insert(yytext,LIT_CHAR);return LIT_CHAR;}
 \"[^\"\n]*\" 	{yylval.symbol = hash_insert(yytext,LIT_STRING);return LIT_STRING;}

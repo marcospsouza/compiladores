@@ -11,7 +11,7 @@ void semanticCheckUndeclared(void){
 
 	for(int i = 0; i < HASH_SIZE; i++){
 		for(n = table[i]; n != NULL; n = n->next){
-			if(n->tk_type == SYMBOL_ID){
+			if(n->tk_type == TK_IDENTIFIER){
 				fprintf(stderr, "Semantic ERROR on line %d: identifier %s undeclared\n",n->node_line, n->value);
 				exit(4);
 			}
@@ -24,9 +24,9 @@ void semanticCheckUndeclared(void){
 void semanticSetTypes(AST* node){
 	int i;
 	if (!node) return;
-	//process this node
+
 	if(node->type == AST_VARDEC){
-		if(node->symbol->tk_type != SYMBOL_ID){
+		if(node->symbol->tk_type != TK_IDENTIFIER){
 			fprintf(stderr,"Semantic ERROR on line %d: identifier %s, already declared \n",  node->node_line,node->symbol->value);
 			exit(4); //deve vir depois, aqui cotinuar aserjaweirjaeijrieajriejrijeirj
 		}
@@ -40,7 +40,7 @@ void semanticSetTypes(AST* node){
 		}
 	}
 	if(node->type == AST_VECDEC){
-		if(node->symbol->tk_type != SYMBOL_ID){
+		if(node->symbol->tk_type != TK_IDENTIFIER){
 			fprintf(stderr,"Semantic ERROR on line %d: identifier %s, already declared \n", node->node_line,node->symbol->value);
 			exit(4); //deve vir depois, aqui cotinuar aserjaweirjaeijrieajriejrijeirj
 		}
@@ -54,7 +54,7 @@ void semanticSetTypes(AST* node){
 		}
 	}
 	if (node->type == AST_FUNDEC){
-		if(node->symbol->tk_type != SYMBOL_ID){
+		if(node->symbol->tk_type != TK_IDENTIFIER){
 			fprintf(stderr, "Semantic ERROR on line %d: identifier %s already declared\n", node->node_line, node->symbol->value);
 			exit(4);
 		}
@@ -69,7 +69,7 @@ void semanticSetTypes(AST* node){
 		}
 	}
 	if(node->type == AST_ARGSDEF){
-		if(node->symbol->tk_type != SYMBOL_ID){
+		if(node->symbol->tk_type != TK_IDENTIFIER){
 			fprintf(stderr, "Semantic ERROR on line %d: identifier %s already declared\n", node->node_line, node->symbol->value);
 			exit(4);
 		}
@@ -81,7 +81,6 @@ void semanticSetTypes(AST* node){
 			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
 			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
 			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
-			functions_list.tail->type_parameters[functions_list.tail->n_parameters] = node->type;
 		}
 	}
 
@@ -96,7 +95,6 @@ void semanticSetTypes(AST* node){
 void semanticCheckUsage(AST* node){
 	int i;
 	if (!node) return;
-	//process this node
 
 	if(node->type == AST_ASSIGN){
 		if(node->symbol->tk_type != SYMBOL_VAR){
@@ -121,7 +119,8 @@ void semanticCheckUsage(AST* node){
 
 	//tem que fazer umas correção autista de numero de linha
 	if(node->type == AST_FUNCALL){
-		if(node->symbol->tk_type != SYMBOL_FUN){ //tem que informar numero da linha que? agora o get lliine number daria sempre eof
+		//fprintf(stderr, "eita, funssaum");
+		if(node->symbol->tk_type != SYMBOL_FUN){
 			fprintf(stderr, "Semantic ERROR on line %d: identifier %s must be a function\n", node->node_line, node->symbol->value);
 			exit(4); //isso deveria ser uma flag global pra mostrar erro na main, e não uma parada de erro realmente
 		}
@@ -142,7 +141,6 @@ void semanticCheckUsage(AST* node){
 void semanticCheckOperands(AST* node){
 	int i;
 	if (!node) return;
-	//process this node
 
 	//check operands of arithmetical operators
 	if (node->type == AST_ADD || node->type == AST_SUB || node->type == AST_MUL || node->type == AST_DIV){
@@ -211,7 +209,7 @@ int checkInt(AST* node){
 	}
 	// N SEI SE TEM Q ACEITAR CHAR AQUI
 	if(node->type == AST_SYMBOL || node->type == AST_VACCESS || node->type == AST_FUNCALL){
-		if(node->symbol->tk_type != SYMBOL_LIT_INT && node->symbol->tk_type != DATATYPE_BYTE && node->symbol->tk_type != DATATYPE_SHORT
+		if(node->symbol->tk_type != LIT_INTEGER && node->symbol->tk_type != DATATYPE_BYTE && node->symbol->tk_type != DATATYPE_SHORT
 			&& node->symbol->tk_type != DATATYPE_LONG)
 			return 0;
 		else return 1;
@@ -219,31 +217,49 @@ int checkInt(AST* node){
 }
 
 int checkArgs(AST* node, char* func_name){
-	/*args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); }
-	| exp { $$ = astCreate(AST_ARGS,0,$1,0,0,0); }
+	/*args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); } 
+	| exp { $$ = $1 }
+	| { $$ = 0;}
 	;*/
 	//se não for nulo então há pelo menos 1 arg
-	if(node != NULL){
-		FUNC_INFO *f = searchFunc(func_name);
-		AST* arg_pointer = node;
-		int count = 0;
-		while(arg_pointer != NULL){
-			count ++;
-			if(count > f->n_parameters){
-				fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);
-				exit(4);
-			}
-			arg_pointer = arg_pointer->son[1];
-		}
-		if(count < f->n_parameters){
-			fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function\n", f->func->node_line, func_name);
+	
+	FUNC_INFO *f = searchFunc(func_name);
+	AST* args = node;
+	int count = 0;
+	while(args != NULL){
+		if(!checkArgType(args->son[0])){
+			fprintf(stderr, "Semantic ERROR on LINE %d: argument of invalid type passed to function \"%s\" \n", f->func->node_line, func_name);
 			exit(4);
-		}	
+		}
+		args = args->son[1];
+		count ++;
+		
+		if(count > f->n_parameters){
+			fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);
+			exit(4);
+		}
 	}
+	if(count < f->n_parameters){
+		fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function\n", f->func->node_line, func_name);
+		exit(4);
+	}	
+	
 
 
 	return 1;
 
+}
+
+int checkArgType(AST* node){
+	//aceita qualquer argumento numérico
+	return 1;
+	fprintf(stderr, " ARG TYPE %s %d\n", node->symbol->value, node->symbol->tk_type);
+	if((node->type == AST_SYMBOL || node->type == AST_VACCESS || node->type == AST_FUNCALL ||
+		node->type == AST_MUL || node->type == AST_DIV || node->type == AST_ADD || node->type == AST_SUB) && node->symbol->tk_type != LIT_STRING)
+		return 1;
+	else if(node->type == AST_EXP)
+		return checkArgType(node->son[0]);
+	else return 0;
 }
 
 void newFunc(HASH_NODE *func){

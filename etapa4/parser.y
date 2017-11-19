@@ -76,7 +76,8 @@ void yyerror(char const *s);
 
 
 %%
-program : decl { astPrint($1,0); printSource($1);
+program : decl { astPrint($1,0); 
+					printSource($1);
 					semanticSetTypes($1);
 					semanticCheckUndeclared();
 					semanticCheckUsage($1);
@@ -112,7 +113,7 @@ fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd { $$ = astCreate(AST_
 	;
 
 args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); }
-	| exp { $$ = astCreate(AST_ARGS,0,$1,0,0,0); }
+	| exp { $$ = $1; }
 	| { $$ = 0;}
 	;
 

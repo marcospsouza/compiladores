@@ -221,7 +221,6 @@ int checkArgs(AST* node, char* func_name){
 	| exp { $$ = $1 }
 	| { $$ = 0;}
 	;*/
-	//se não for nulo então há pelo menos 1 arg
 	
 	FUNC_INFO *f = searchFunc(func_name);
 	AST* args = node;
@@ -230,7 +229,7 @@ int checkArgs(AST* node, char* func_name){
 		if(!checkArgType(args->son[0])){
 			fprintf(stderr, "Semantic ERROR on LINE %d: argument of invalid type passed to function \"%s\" \n", f->func->node_line, func_name);
 			exit(4);
-		}
+		}		
 		args = args->son[1];
 		count ++;
 		
@@ -243,11 +242,7 @@ int checkArgs(AST* node, char* func_name){
 		fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function\n", f->func->node_line, func_name);
 		exit(4);
 	}	
-	
-
-
 	return 1;
-
 }
 
 int checkArgType(AST* node){

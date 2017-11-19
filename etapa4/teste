@@ -20,7 +20,7 @@ d: byte = 65;
   read > i;
   while (i<10)
     {
-    a = incn(2, a);
+    a = incn((2>2), (23/2));
     i = i + 1 > 2
     };
   c = voidfunc();

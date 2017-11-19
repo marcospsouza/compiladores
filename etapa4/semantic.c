@@ -252,14 +252,15 @@ int checkArgs(AST* node, char* func_name){
 
 int checkArgType(AST* node){
 	//aceita qualquer argumento numérico
-	return 1;
-	fprintf(stderr, " ARG TYPE %s %d\n", node->symbol->value, node->symbol->tk_type);
+	if(node->type == AST_NOT || node->type == AST_GT || node->type == AST_LS || node->type == AST_GE || node->type == AST_LE ||
+	 	node->type == AST_EQ || node->type == AST_NE || node->type == AST_AND || node->type == AST_OR){
+		return 0;
+	}
 	if((node->type == AST_SYMBOL || node->type == AST_VACCESS || node->type == AST_FUNCALL ||
 		node->type == AST_MUL || node->type == AST_DIV || node->type == AST_ADD || node->type == AST_SUB) && node->symbol->tk_type != LIT_STRING)
 		return 1;
-	else if(node->type == AST_EXP)
+	if(node->type == AST_EXP)
 		return checkArgType(node->son[0]);
-	else return 0;
 }
 
 void newFunc(HASH_NODE *func){

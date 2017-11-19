@@ -1,7 +1,25 @@
+#ifndef SEMANTIC_C
+#define SEMANTIC_C
+
 #include <stdlib.h>
 
 #include "semantic.h"
 
+void semanticCheckUndeclared(void){
+
+	HASH_NODE *n;
+
+	for(int i = 0; i < HASH_SIZE; i++){
+		for(n = table[i]; n != NULL; n = n->next){
+			if(n->tk_type == SYMBOL_ID){
+				fprintf(stderr, "Semantic ERROR on line %d: identifier %s undeclared\n",n->node_line, n->value);
+				exit(4);
+			}
+		}
+	}
+	//hashCheckUndeclared();
+
+}
 
 void semanticSetTypes(AST* node){
 	int i;
@@ -42,6 +60,7 @@ void semanticSetTypes(AST* node){
 		}
 		else{
 			node->symbol->tk_type = SYMBOL_FUN;
+			newFunc(node->symbol);
 			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
 			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
 			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
@@ -56,11 +75,13 @@ void semanticSetTypes(AST* node){
 		}
 		else{
 			node->symbol->tk_type = SYMBOL_VAR;
+			functions_list.tail->n_parameters +=1;
 			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
 			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
 			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
 			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
 			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+			functions_list.tail->type_parameters[functions_list.tail->n_parameters] = node->type;
 		}
 	}
 
@@ -69,22 +90,6 @@ void semanticSetTypes(AST* node){
 		semanticSetTypes(node->son[i]);
 	}
 
-
-}
-
-void semanticCheckUndeclared(void){
-
-	HASH_NODE *n;
-
-	for(int i = 0; i < HASH_SIZE; i++){
-		for(n = table[i]; n != NULL; n = n->next){
-			if(n->tk_type == SYMBOL_ID){
-				fprintf(stderr, "Semantic ERROR on line %d: identifier %s undeclared\n",n->node_line, n->value);
-				exit(4);
-			}
-		}
-	}
-	//hashCheckUndeclared();
 
 }
 
@@ -122,7 +127,7 @@ void semanticCheckUsage(AST* node){
 		}
 		//checar argumentos da funçao AINDA NUM FIZ ISSO
 		else{
-			if(!checkArgs(node->son[0]))
+			if(!checkArgs(node->son[0], node->symbol->value))
 				fprintf(stderr, "A");
 		}
 	}
@@ -158,7 +163,7 @@ void semanticCheckOperands(AST* node){
 			exit(4);
 		}
 	}
-	//check operands of logical operators
+	/*//check operands of logical operators
 	if (node->type == AST_ADD || node->type == AST_MUL){
 		//check first operand
 		if(node->son[0]->type == AST_GREATER){
@@ -183,7 +188,7 @@ void semanticCheckOperands(AST* node){
 			fprintf(stderr, "Semantic ERROR on line %d: right operand of cannot be >\n", node->node_line);
 			exit(4);
 		}
-	}
+	}*/
 
 	for (i=0; i<MAX_SONS; ++i){
 		semanticSetTypes(node->son[i]);
@@ -212,19 +217,63 @@ int checkInt(AST* node){
 		else return 1;
 	}
 }
-// PUTA MAO DO CARALHO ESTA BOSTA
-int checkArgs(AST* node){
+
+int checkArgs(AST* node, char* func_name){
 	/*args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); }
 	| exp { $$ = astCreate(AST_ARGS,0,$1,0,0,0); }
 	;*/
+	//se não for nulo então há pelo menos 1 arg
+	if(node != NULL){
+		FUNC_INFO *f = searchFunc(func_name);
+		AST* arg_pointer = node;
+		int count = 0;
+		while(arg_pointer != NULL){
+			count ++;
+			if(count > f->n_parameters){
+				fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);
+				exit(4);
+			}
+			arg_pointer = arg_pointer->son[1];
+		}
+		if(count < f->n_parameters){
+			fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function\n", f->func->node_line, func_name);
+			exit(4);
+		}	
+	}
+
 
 	return 1;
 
 }
 
+void newFunc(HASH_NODE *func){
+	FUNC_INFO* new_func = (FUNC_INFO*)calloc(1,sizeof(FUNC_INFO));
+	new_func->func = func;
+	new_func->n_parameters = 0;
+	new_func->next = NULL;
+
+	if(functions_list.head == NULL){
+		functions_list.head = new_func;
+		functions_list.tail = new_func;
+	}
+	else{
+		functions_list.tail->next = new_func;
+		functions_list.tail = new_func;
+	}
+}
+
+FUNC_INFO* searchFunc(char* func_name){
+
+	FUNC_INFO* pointer = functions_list.head;
+
+	while(pointer != functions_list.tail){
+		if(strcmp(func_name, pointer->func->value) == 0)
+			break;
+		pointer = pointer->next;		
+	}
+	return pointer;
+}
 
 
 
-
-
-
+#endif

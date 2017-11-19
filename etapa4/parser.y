@@ -113,6 +113,7 @@ fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd { $$ = astCreate(AST_
 
 args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); }
 	| exp { $$ = astCreate(AST_ARGS,0,$1,0,0,0); }
+	| { $$ = 0;}
 	;
 
 argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$5,0,0); }  

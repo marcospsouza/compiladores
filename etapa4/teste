@@ -10,7 +10,7 @@ c: byte = 'x';
 d: byte = 65;
 //a = 5;
 
-(long) main(a: short, g: long)
+(long) main(r: short, g: long)
   {
   //l = 2;
   a = v[3 + 2];
@@ -20,9 +20,10 @@ d: byte = 65;
   read > i;
   while (i<10)
     {
-    a = incn(a,1);
+    a = incn(a, 2);
     i = i + 1 > 2
     };
+  c = voidfunc();
   print "Incrementado algumas vezes fica ",a,"\n";
   if (a==5 && i == 2) then 
     { print "Parou no meio\n"; };

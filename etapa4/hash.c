@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+int getLineNumber();
+
+
 void hash_create(){
 
 	int i;
@@ -49,7 +53,7 @@ HASH_NODE *hash_insert (char *text, int type){
 
 	if ((newnode = hash_search(text)) != 0)
 		return newnode;
-	
+
 	newnode = (HASH_NODE *) malloc (sizeof(HASH_NODE));
 	newnode->value = (char *) malloc (sizeof(char)*strlen(text));
 	strcpy(newnode->value, text);

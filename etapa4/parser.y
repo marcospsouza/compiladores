@@ -9,6 +9,14 @@
 #include "hash.h"
 #include "astree.h"
 
+void semanticSetTypes() ; //recursiva
+void semanticCheckUndeclared(void);
+void semanticCheckUsage();
+void semanticCheckOperands();
+
+
+
+
 int yylex();
 void yyerror(char const *s);
 
@@ -77,13 +85,13 @@ void yyerror(char const *s);
 
 
 %%
-program : decl { //astPrint($1,0); 
+program : decl { //astPrint($1,0);
 					printSource($1);
 					semanticSetTypes($1);
 					semanticCheckUndeclared();
 					semanticCheckUsage($1);
-					semanticCheckOperands($1); 
-				} 
+					semanticCheckOperands($1);
+				}
 
 
 
@@ -92,7 +100,7 @@ decl : dec decl { $$ = astCreate(AST_DECL, 0, $1, $2, 0, 0);}
 	;
 
 dec : vardec { $$ = $1; }
-	| fundec { $$ = $1; } 
+	| fundec { $$ = $1; }
 	;
 
 vardec : TK_IDENTIFIER ':' vartype '=' lit ';' { $$ = astCreate(AST_VARDEC, $1, $3, $5, 0, 0); }
@@ -122,8 +130,8 @@ largs: ',' exp largs {$$ = astCreate(AST_ARGS, 0, $2, $3, 0, 0);}
 	;
 
 
-argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$5,0,0); }  
-	| TK_IDENTIFIER ':' vartype argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$4,0,0); }  
+argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$5,0,0); }
+	| TK_IDENTIFIER ':' vartype argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$4,0,0); }
 	|	{ $$ = 0; }
 	;
 
@@ -141,7 +149,7 @@ block: '(' lcmd ')'  { $$ = astCreate(AST_BLOCK,0,$2,0,0,0); }
 	;
 
 
-cmd : atrib { $$ = $1; }     
+cmd : atrib { $$ = $1; }
 	| KW_PRINT printargs {$$ = astCreate(AST_KWPRINT, 0, $2, 0, 0, 0);}
 	| KW_READ '>' TK_IDENTIFIER {$$ = astCreate(AST_KWREAD, $3, 0, 0, 0, 0);}
 	| KW_WHILE '(' exp ')' cmd {$$ = astCreate(AST_KWWHILE, 0, $3, $5, 0, 0);}

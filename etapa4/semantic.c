@@ -2,8 +2,13 @@
 #define SEMANTIC_C
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "semantic.h"
+
+int checkBool(AST* node);
+int checkArgType(AST* node);
+
 
 void semanticCheckUndeclared(void){
 
@@ -112,7 +117,7 @@ void semanticCheckUsage(AST* node){
 		else{
 			//percorre a árvore e checa se resultado é int, ACESSO A VETOR SOMENTE COM INT (byte, short, long e literais char, int)
 			if (!checkInt(node->son[0])){
-				fprintf(stderr, "Semantic ERROR on line %d: vector index must be an integer\n", node->node_line, node->symbol->value);
+				fprintf(stderr, "Semantic ERROR on line %d: vector index must be an integer\n", node->node_line);
 			}
 		}
 	}
@@ -128,7 +133,7 @@ void semanticCheckUsage(AST* node){
 		else{
 			if(!checkArgs(node->son[0], node->symbol->value))
 				fprintf(stderr, "A");
-		
+
 		}
 	}
 
@@ -152,14 +157,14 @@ void semanticCheckOperands(AST* node){
 			fprintf(stderr, "Semantic ERROR on line %d: left operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
-	
+
 		//check second operand
 		if(checkBool(node->son[1])){
 			fprintf(stderr, "Semantic ERROR on line %d: right operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
 	}
-	
+
 	for (i=0; i<MAX_SONS; ++i){
 		semanticCheckOperands(node->son[i]);
 	}
@@ -167,7 +172,7 @@ void semanticCheckOperands(AST* node){
 
 int checkBool(AST* node){
 
-	if(node->type == AST_GT || node->type == AST_LS || node->type == AST_GE || node->type == AST_LE || node->type == AST_NE 
+	if(node->type == AST_GT || node->type == AST_LS || node->type == AST_GE || node->type == AST_LE || node->type == AST_NE
 		|| node->type == AST_EQ || node->type == AST_OR || node->type == AST_AND || node->type == AST_NOT)
 		return 1;
 
@@ -183,7 +188,7 @@ int checkBool(AST* node){
 
 }
 
-int checkInt(AST* node){  
+int checkInt(AST* node){
 	//operaçoes booleanas nunca resultarão em INT
 	if(node->type == AST_NOT || node->type == AST_GT || node->type == AST_LS || node->type == AST_GE || node->type == AST_LE ||
 	 	node->type == AST_EQ || node->type == AST_NE || node->type == AST_AND || node->type == AST_OR){
@@ -216,7 +221,7 @@ int checkArgs(AST* node, char* func_name){
 	;
 
 	;*/
-	
+
 	FUNC_INFO *f = searchFunc(func_name);
 	AST* arg_pointer = node;
 	int count = 0;
@@ -226,11 +231,11 @@ int checkArgs(AST* node, char* func_name){
 			fprintf(stderr, "Semantic ERROR on LINE %d: argument of invalid type passed to function \"%s\" \n", f->func->node_line, func_name);
 			exit(4);
 		}
-		fprintf("argument %d: type correct\n", count);
+		fprintf(stderr,"argument %d: type correct\n", count);
 		count++;
 		if(count > f->n_parameters){
 			fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);
-			exit(4);			
+			exit(4);
 		}
 		arg_pointer = arg_pointer->son[1];
 	}
@@ -238,7 +243,7 @@ int checkArgs(AST* node, char* func_name){
 	if(count < f->n_parameters){
 		fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function call\n", f->func->node_line, func_name);
 		exit(4);
-	}	
+	}
 	return 1;
 }
 
@@ -281,7 +286,7 @@ FUNC_INFO* searchFunc(char* func_name){
 	while(pointer != functions_list.tail){
 		if(strcmp(func_name, pointer->func->value) == 0)
 			break;
-		pointer = pointer->next;		
+		pointer = pointer->next;
 	}
 	return pointer;
 }

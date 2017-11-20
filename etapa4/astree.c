@@ -7,6 +7,10 @@
 #include <stdlib.h>
 
 
+int getLineNumber();
+
+
+
 AST* astCreate(int type, HASH_NODE *symbol, AST* son0, AST* son1, AST* son2,AST* son3){
 	AST* newnode;
 	newnode =  (AST*)calloc(1,sizeof(AST));
@@ -32,7 +36,7 @@ void astPrint(AST * node,int level){
 		switch(node->type){
 			case AST_SYMBOL: fprintf(stderr, "SYMBOL,");break;
 			case AST_ADD: fprintf(stderr, "AST_ADD,");break;
-			case AST_SUB: fprintf(stderr, "AST_SUB,");break;			
+			case AST_SUB: fprintf(stderr, "AST_SUB,");break;
 			case AST_MUL: fprintf(stderr, "AST_MUL,");break;
 			case AST_DIV: fprintf(stderr, "AST_DIV,");break;
 			case AST_GT: fprintf(stderr, "AST_GT,");break;
@@ -41,34 +45,34 @@ void astPrint(AST * node,int level){
 
 			case AST_LE: fprintf(stderr, "AST_LE,");break;
 			case AST_GE: fprintf(stderr, "AST_GE,");break;
-			case AST_EQ: fprintf(stderr, "AST_EQ,");break;			
+			case AST_EQ: fprintf(stderr, "AST_EQ,");break;
 			case AST_NE: fprintf(stderr, "AST_NE,");break;
 			case AST_OR: fprintf(stderr, "AST_OR, ");break;
 			case AST_AND: fprintf(stderr, "AST_AND,");break;
 			case AST_INT: fprintf(stderr, "AST_INT,");break;
 			case AST_CHAR: fprintf(stderr, "AST_CHAR,");break;
-			case AST_REAL: fprintf(stderr, "AST_REAL,");break;				
+			case AST_REAL: fprintf(stderr, "AST_REAL,");break;
 
 			case AST_KWBYTE: fprintf(stderr, "AST_KWBYTE,");break;
 			case AST_KWSHORT: fprintf(stderr, "AST_KWSHORT,");break;
-			case AST_KWLONG: fprintf(stderr, "AST_KWLONG,");break;			
+			case AST_KWLONG: fprintf(stderr, "AST_KWLONG,");break;
 			case AST_KWFLOAT: fprintf(stderr, "AST_KWFLOAT,");break;
 			case AST_KWDOUBLE: fprintf(stderr, "AST_KWDOUBLE,");break;
 			case AST_KWIF: fprintf(stderr, "AST_KWIF,");break;
 			case AST_KWTHEN: fprintf(stderr, "AST_KWTHEN,");break;
-			case AST_KWELSE: fprintf(stderr, "AST_KWELSE,");break;	
+			case AST_KWELSE: fprintf(stderr, "AST_KWELSE,");break;
 
 			case AST_KWWHILE: fprintf(stderr, "AST_KWWHILE,");break;
 			case AST_KWFOR: fprintf(stderr, "AST_KWFOR,");break;
-			case AST_KWREAD: fprintf(stderr, "AST_KWREAD,");break;			
+			case AST_KWREAD: fprintf(stderr, "AST_KWREAD,");break;
 			case AST_KWRETURN: fprintf(stderr, "AST_KWRETURN,");break;
 			case AST_KWPRINT: fprintf(stderr, "AST_KWPRINT,");break;
 			case AST_TKID: fprintf(stderr, "AST_TKID,");break;
 			case AST_EXP: fprintf(stderr, "AST_EXP,");break;
-			case AST_LCMD: fprintf(stderr, "AST_LCMD,");break;	
+			case AST_LCMD: fprintf(stderr, "AST_LCMD,");break;
 
 			case AST_CMD: fprintf(stderr, "AST_CMD,");break;
-			case AST_BLOCK: fprintf(stderr, "AST_BLOCK,");break;			
+			case AST_BLOCK: fprintf(stderr, "AST_BLOCK,");break;
 			case AST_DECL: fprintf(stderr, "AST_DECL,");break;
 			case AST_DEC: fprintf(stderr, "AST_DEC,");break;
 			case AST_VARDEC: fprintf(stderr, "AST_VARDEC,");break;
@@ -77,11 +81,11 @@ void astPrint(AST * node,int level){
 			case AST_FUNCALL: fprintf(stderr, "AST_FUNCALL,");break;
 			case AST_VASSIGN: fprintf(stderr, "AST_VASSIGN,");break;
 			case AST_VACCESS: fprintf(stderr, "AST_VACCESS,");break;
-			case AST_VTL: fprintf(stderr, "AST_VTL,");break;	
+			case AST_VTL: fprintf(stderr, "AST_VTL,");break;
 
 			case AST_LIT: fprintf(stderr, "AST_LIT,");break;
 			case AST_LITLIST: fprintf(stderr, "AST_LITLIST,");break;
-			case AST_VARTYPE: fprintf(stderr, "AST_VARTYPE,");break;			
+			case AST_VARTYPE: fprintf(stderr, "AST_VARTYPE,");break;
 			case AST_ARGSDEF: fprintf(stderr, "AST_ARGSDEF,");break;
 			case AST_ASSIGN: fprintf(stderr, "AST_ASSIGN,");break;
 			case AST_PRINTARGS: fprintf(stderr, "AST_PRINTARGS,");break;
@@ -99,12 +103,12 @@ void astPrint(AST * node,int level){
 
 		for(i=0; i < MAX_SONS; i++)
 			astPrint(node->son[i], level+1);
-	
+
 
 	}
 }
 void printSource(AST *root){
-	
+
 	printnodeSource(root, source_code);
 
 
@@ -114,12 +118,12 @@ void printnodeSource(AST *node, FILE *source_code){
 	if(node){
 		switch(node->type){
 
-			case AST_DECL: 
+			case AST_DECL:
 				printnodeSource(node->son[0], source_code);
 				printnodeSource(node->son[1], source_code);
 				break;
 
-			case AST_VARDEC: 
+			case AST_VARDEC:
 				fprintf(source_code, "%s: ", node->symbol->value);
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, " = ");
@@ -145,7 +149,7 @@ void printnodeSource(AST *node, FILE *source_code){
 				printnodeSource(node->son[1], source_code);
 				break;
 
-			case AST_SYMBOL: 
+			case AST_SYMBOL:
 				fprintf(source_code, "%s", node->symbol->value);
 				if(node->son[0] != 0){
 					fprintf(source_code, " ");
@@ -158,7 +162,7 @@ void printnodeSource(AST *node, FILE *source_code){
             	printnodeSource(node->son[0], source_code);
             	fprintf(source_code, ")");
 				break;
-			case AST_VASSIGN:				
+			case AST_VASSIGN:
 				fprintf(source_code, "%s", node->symbol->value);
 				fprintf(source_code, "[");
 				printnodeSource(node->son[0], source_code);
@@ -173,7 +177,7 @@ void printnodeSource(AST *node, FILE *source_code){
 				fprintf(source_code, "]");
 				break;
 
-			case AST_FUNDEC: 
+			case AST_FUNDEC:
 				fprintf(source_code, "(");
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, ") ");
@@ -185,7 +189,7 @@ void printnodeSource(AST *node, FILE *source_code){
 				break;
 
 
-			case AST_ARGSDEF: 
+			case AST_ARGSDEF:
 				fprintf(source_code, "%s:", node->symbol->value);
 				printnodeSource(node->son[0], source_code);
 				if(node->son[1] != 0){
@@ -194,13 +198,13 @@ void printnodeSource(AST *node, FILE *source_code){
 				}
 				break;
 
-			case AST_ARGS: 
+			case AST_ARGS:
 				//printf(source_code, "%s", node->son[0]->symbol->value);
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, ", ");
 				if(node->son[1] != 0)
 					printnodeSource(node->son[1], source_code);
-					
+
 				/*if(node->son[1] != 0){
 					fprintf(source_code, ", ");
 					printnodeSource(node->son[1], source_code);
@@ -212,52 +216,52 @@ void printnodeSource(AST *node, FILE *source_code){
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, "\n}");
 				break;
-			case AST_LCMD: 
+			case AST_LCMD:
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, ";\n");
 				printnodeSource(node->son[1], source_code);
 				break;
 
-			case AST_ASSIGN: 
+			case AST_ASSIGN:
 				fprintf(source_code, "%s=", node->symbol->value);
 				printnodeSource(node->son[0], source_code);
 				break;
-			case AST_KWBYTE: 
-				fprintf(source_code, "byte"); 
+			case AST_KWBYTE:
+				fprintf(source_code, "byte");
 				break;
-			case AST_KWSHORT: 
-				fprintf(source_code, "short"); 
+			case AST_KWSHORT:
+				fprintf(source_code, "short");
 				break;
-			case AST_KWLONG: 
-				fprintf(source_code, "long"); 
+			case AST_KWLONG:
+				fprintf(source_code, "long");
 				break;
-			case AST_KWFLOAT: 
-				fprintf(source_code, "float"); 
+			case AST_KWFLOAT:
+				fprintf(source_code, "float");
 				break;
-			case AST_KWDOUBLE: 
-				fprintf(source_code, "double"); 
+			case AST_KWDOUBLE:
+				fprintf(source_code, "double");
 				break;
-			case AST_KWREAD: 
+			case AST_KWREAD:
 				fprintf(source_code, "read > ");
 				fprintf(source_code, "%s", node->symbol->value);
 				break;
-			case AST_KWRETURN: 
+			case AST_KWRETURN:
 				fprintf(source_code, "return ");
 				printnodeSource(node->son[0], source_code);
 				break;
-			case AST_KWPRINT: 
+			case AST_KWPRINT:
 				fprintf(source_code, "print ");
 				printnodeSource(node->son[0], source_code);
 				break;
 
-			case AST_PRINTARGS: 
+			case AST_PRINTARGS:
 				printnodeSource(node->son[0], source_code);
 				if(node->son[1] != 0){
 					fprintf(source_code, ", ");
 					printnodeSource(node->son[1], source_code);
 				}
 				break;
-			case AST_KWIF: 
+			case AST_KWIF:
 				fprintf(source_code, "if (");
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, ") then\n\t");
@@ -274,14 +278,14 @@ void printnodeSource(AST *node, FILE *source_code){
 	            fprintf(source_code, " )");
 	            break;
 
-	        /*case AST_KWFOR: 
+	        /*case AST_KWFOR:
 				fprintf(stderr, "for (");
 				printnodeSource(node->son[0], source_code);
 				fprintf(stderr, ")\n\t");
 				printnodeSource(node->son[1], source_code);
 				break;*/
 
-			case AST_KWWHILE: 
+			case AST_KWWHILE:
 				fprintf(source_code, "while (");
 				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, ")\n\t");
@@ -302,7 +306,7 @@ void printnodeSource(AST *node, FILE *source_code){
 	      	case AST_DIV: printnodeSource(node->son[0], source_code);
 	            fprintf(source_code, " / ");
 	            printnodeSource(node->son[1], source_code);
-	            break;	      	
+	            break;
 	        case AST_LE: printnodeSource(node->son[0], source_code);
 	            fprintf(source_code, " <= ");
 	            printnodeSource(node->son[1], source_code);

@@ -20,8 +20,8 @@ d: byte = 65;
   read > i;
   while (i<10)
     {
-    a = incn(2, a);
-    i = i + 1 > 2
+    a = incn(2/3, a*7 + 4/6);
+    i = i + ((2*3) + 7/8) < 2 
     };
   c = voidfunc();
   print "Incrementado algumas vezes fica ",a,"\n";

@@ -195,7 +195,8 @@ void printnodeSource(AST *node, FILE *source_code){
 				break;
 
 			case AST_ARGS: 
-				fprintf(source_code, "%s", node->son[0]->symbol->value);
+				//printf(source_code, "%s", node->son[0]->symbol->value);
+				printnodeSource(node->son[0], source_code);
 				fprintf(source_code, ", ");
 				if(node->son[1] != 0)
 					printnodeSource(node->son[1], source_code);

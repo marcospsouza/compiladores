@@ -66,6 +66,7 @@ void yyerror(char const *s);
 %type <ast> tailprint
 %type <ast> argprint
 %type <ast> args
+%type <ast> largs
 
 
 
@@ -76,12 +77,12 @@ void yyerror(char const *s);
 
 
 %%
-program : decl { astPrint($1,0); 
+program : decl { //astPrint($1,0); 
 					printSource($1);
 					semanticSetTypes($1);
 					semanticCheckUndeclared();
 					semanticCheckUsage($1);
-					//semanticCheckOperands($1); 
+					semanticCheckOperands($1); 
 				} 
 
 
@@ -112,10 +113,14 @@ litlist: lit litlist { $$ = astCreate(AST_LITLIST, 0, $1, $2, 0, 0); }
 fundec : '(' vartype ')' TK_IDENTIFIER '(' argsdef ')' cmd { $$ = astCreate(AST_FUNDEC,$4,$2,0,$6,$8); }
 	;
 
-args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); }
-	| exp { $$ = astCreate(AST_ARGS,0,$1,0,0,0); }
-	| { $$ = 0;}
+args: exp largs {$$ = astCreate(AST_ARGS, 0, $1, $2, 0, 0);}
+	| {$$ = 0;}
 	;
+
+largs: ',' exp largs {$$ = astCreate(AST_ARGS, 0, $2, $3, 0, 0);}
+	| {$$ = 0;}
+	;
+
 
 argsdef: TK_IDENTIFIER ':' vartype ',' argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$5,0,0); }  
 	| TK_IDENTIFIER ':' vartype argsdef { $$ = astCreate(AST_ARGSDEF,$1,$3,$4,0,0); }  

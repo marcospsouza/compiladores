@@ -128,6 +128,7 @@ void semanticCheckUsage(AST* node){
 		else{
 			if(!checkArgs(node->son[0], node->symbol->value))
 				fprintf(stderr, "A");
+		
 		}
 	}
 
@@ -145,52 +146,41 @@ void semanticCheckOperands(AST* node){
 	//check operands of arithmetical operators
 	if (node->type == AST_ADD || node->type == AST_SUB || node->type == AST_MUL || node->type == AST_DIV){
 		//check first operand
-		if(node->son[0]->type == AST_GT || node->son[0]->type == AST_LS || node->son[0]->type == AST_GE || node->son[0]->type == AST_LE
-			|| node->son[0]->type == AST_NE || node->son[0]->type == AST_EQ || node->son[0]->type == AST_OR || node->son[0]->type == AST_AND
-			|| node->son[0]->type == AST_NOT){
+		//fprintf(stderr, "%d ", node->node_line);
 
+		if(checkBool(node->son[0])){
 			fprintf(stderr, "Semantic ERROR on line %d: left operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
+	
 		//check second operand
-		if(node->son[1]->type == AST_GT || node->son[1]->type == AST_LS || node->son[1]->type == AST_GE || node->son[1]->type == AST_LE
-			|| node->son[1]->type == AST_NE || node->son[1]->type == AST_EQ || node->son[1]->type == AST_OR || node->son[1]->type == AST_AND
-			|| node->son[1]->type == AST_NOT){
-
+		if(checkBool(node->son[1])){
 			fprintf(stderr, "Semantic ERROR on line %d: right operand of arithmetical operation cannot be a logical operand (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
 	}
-	/*//check operands of logical operators
-	if (node->type == AST_ADD || node->type == AST_MUL){
-		//check first operand
-		if(node->son[0]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR on line %d: left operand of cannot be >\n",node->node_line);
-			exit(4);
-		}
-		//check second operand
-		if(node->son[1]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR on line %d: right operand of cannot be >\n",node->node_line);
-			exit(4);		
-		}
-	}
-	//check assigment (real to real, int to int)
-	if (node->type == AST_ADD || node->type == AST_MUL){
-		//check first operand
-		if(node->son[0]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR on line %d: left operand of cannot be >\n",node->node_line);
-			exit(4);
-		}
-		//check seconds operand
-		if(node->son[1]->type == AST_GREATER){
-			fprintf(stderr, "Semantic ERROR on line %d: right operand of cannot be >\n", node->node_line);
-			exit(4);
-		}
-	}*/
-
+	
 	for (i=0; i<MAX_SONS; ++i){
-		semanticSetTypes(node->son[i]);
+		semanticCheckOperands(node->son[i]);
 	}
+}
+
+int checkBool(AST* node){
+
+	if(node->type == AST_GT || node->type == AST_LS || node->type == AST_GE || node->type == AST_LE || node->type == AST_NE 
+		|| node->type == AST_EQ || node->type == AST_OR || node->type == AST_AND || node->type == AST_NOT)
+		return 1;
+
+	if(node->type == AST_MUL || node->type == AST_DIV || node->type == AST_ADD || node->type == AST_SUB){
+		return (checkBool(node->son[0]) && checkBool(node->son[1]));
+	}
+	if(node->type == AST_EXP){
+		return checkBool(node->son[0]);
+	}
+
+	if(node->type == AST_SYMBOL || node->type == AST_VACCESS || node->type == AST_FUNCALL)
+		return 0;
+
 }
 
 int checkInt(AST* node){  
@@ -217,29 +207,36 @@ int checkInt(AST* node){
 }
 
 int checkArgs(AST* node, char* func_name){
-	/*args: exp ',' args { $$ = astCreate(AST_ARGS,0,$1,$3,0,0); } 
-	| exp { $$ = $1 }
-	| { $$ = 0;}
+	/*args: exp largs {$$ = astCreate(AST_ARGS, 0, $1, $2, 0, 0);}
+	| {$$ = 0;}
+	;
+
+	largs: ',' exp largs {$$ = astCreate(AST_ARGS, 0, $2, $3, 0, 0);}
+	| {$$ = 0;}
+	;
+
 	;*/
 	
 	FUNC_INFO *f = searchFunc(func_name);
-	AST* args = node;
+	AST* arg_pointer = node;
 	int count = 0;
-	while(args != NULL){
-		if(!checkArgType(args->son[0])){
+
+	while(arg_pointer != NULL){
+		if(!checkArgType(arg_pointer->son[0])){
 			fprintf(stderr, "Semantic ERROR on LINE %d: argument of invalid type passed to function \"%s\" \n", f->func->node_line, func_name);
 			exit(4);
-		}		
-		args = args->son[1];
-		count ++;
-		
+		}
+		fprintf("argument %d: type correct\n", count);
+		count++;
 		if(count > f->n_parameters){
 			fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);
-			exit(4);
+			exit(4);			
 		}
+		arg_pointer = arg_pointer->son[1];
 	}
+
 	if(count < f->n_parameters){
-		fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function\n", f->func->node_line, func_name);
+		fprintf(stderr, "Semantic ERROR on LINE %d: arguments lacking on calling \"%s\" function call\n", f->func->node_line, func_name);
 		exit(4);
 	}	
 	return 1;
@@ -247,12 +244,15 @@ int checkArgs(AST* node, char* func_name){
 
 int checkArgType(AST* node){
 	//aceita qualquer argumento numérico
+	if(node->symbol != NULL)
+		if(node->symbol->tk_type == LIT_STRING)
+			return 0;
 	if(node->type == AST_NOT || node->type == AST_GT || node->type == AST_LS || node->type == AST_GE || node->type == AST_LE ||
 	 	node->type == AST_EQ || node->type == AST_NE || node->type == AST_AND || node->type == AST_OR){
 		return 0;
 	}
-	if((node->type == AST_SYMBOL || node->type == AST_VACCESS || node->type == AST_FUNCALL ||
-		node->type == AST_MUL || node->type == AST_DIV || node->type == AST_ADD || node->type == AST_SUB) && node->symbol->tk_type != LIT_STRING)
+	if(node->type == AST_SYMBOL || node->type == AST_VACCESS || node->type == AST_FUNCALL ||
+		node->type == AST_MUL || node->type == AST_DIV || node->type == AST_ADD || node->type == AST_SUB)
 		return 1;
 	if(node->type == AST_EXP)
 		return checkArgType(node->son[0]);

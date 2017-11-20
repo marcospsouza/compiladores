@@ -15,13 +15,13 @@ d: byte = 65;
   //l = 2;
   a = v[3 + 2];
   v[2] = v[10-1];
-
+  
   print " Digite um numero: \n";
   read > i;
   while (i<10)
     {
     a = incn(2/3, a*7 + 4/6);
-    i = i + ((2*3) + 7/8) < 2 
+    i = i + (2*3 + 3)
     };
   c = voidfunc();
   print "Incrementado algumas vezes fica ",a,"\n";

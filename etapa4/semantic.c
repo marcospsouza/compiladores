@@ -118,6 +118,7 @@ void semanticCheckUsage(AST* node){
 			//percorre a árvore e checa se resultado é int, ACESSO A VETOR SOMENTE COM INT (byte, short, long e literais char, int)
 			if (!checkInt(node->son[0])){
 				fprintf(stderr, "Semantic ERROR on line %d: vector index must be an integer\n", node->node_line);
+				exit(4);
 			}
 		}
 	}
@@ -131,9 +132,7 @@ void semanticCheckUsage(AST* node){
 		}
 		//checar argumentos da funçao AINDA NUM FIZ ISSO
 		else{
-			if(!checkArgs(node->son[0], node->symbol->value))
-				fprintf(stderr, "A");
-
+			checkArgs(node->son[0], node->symbol->value);
 		}
 	}
 
@@ -164,6 +163,26 @@ void semanticCheckOperands(AST* node){
 			exit(4);
 		}
 	}
+	if(node->type == AST_ASSIGN){
+		if(checkBool(node->son[0])){
+			fprintf(stderr, "Semantic ERROR on line %d: right operand cannot be logical in assignment (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
+			exit(4);
+		}
+	}
+
+	if(node->type == AST_VASSIGN){
+		if(checkBool(node->son[1])){	
+			fprintf(stderr, "Semantic ERROR on line %d: right operand cannot be logical in vector assignment (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
+			exit(4);
+		}
+	}
+
+	if(node->type == AST_KWRETURN){
+		if(!checkArgType(node->son[0])){	//check argtype checa se é numerico
+			fprintf(stderr, "Semantic ERROR on line %d: invalid return type\n", node->node_line);
+			exit(4);
+		}
+	}
 
 	for (i=0; i<MAX_SONS; ++i){
 		semanticCheckOperands(node->son[i]);
@@ -177,7 +196,7 @@ int checkBool(AST* node){
 		return 1;
 
 	if(node->type == AST_MUL || node->type == AST_DIV || node->type == AST_ADD || node->type == AST_SUB){
-		return (checkBool(node->son[0]) && checkBool(node->son[1]));
+		return (checkBool(node->son[0]) || checkBool(node->son[1]));
 	}
 	if(node->type == AST_EXP){
 		return checkBool(node->son[0]);
@@ -231,7 +250,6 @@ int checkArgs(AST* node, char* func_name){
 			fprintf(stderr, "Semantic ERROR on LINE %d: argument of invalid type passed to function \"%s\" \n", f->func->node_line, func_name);
 			exit(4);
 		}
-		fprintf(stderr,"argument %d: type correct\n", count);
 		count++;
 		if(count > f->n_parameters){
 			fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);

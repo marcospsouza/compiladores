@@ -233,16 +233,42 @@ void semanticCheckOperands(AST* node){
 		}
 	}
 	if(node->type == AST_ASSIGN){
+		HASH_NODE* n = hash_search(node->symbol->value);
 		if(checkBool(node->son[0])){
 			fprintf(stderr, "Semantic ERROR on line %d: right operand cannot be logical in assignment (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
 		}
+		if(checkInt(node->son[0])){	
+			if(n->data_type != DATATYPE_BYTE && n->data_type != DATATYPE_SHORT && n->data_type != DATATYPE_LONG){
+				fprintf(stderr, "Semantic ERROR on LINE %d: invalid assignment, expected real value.\n", node->node_line);
+				exit(4);
+			}
+		}
+		else if(checkReal(node->son[0])){
+			if(n->data_type != DATATYPE_FLOAT && n->data_type != DATATYPE_DOUBLE){
+				fprintf(stderr, "Semantic ERROR on LINE %d: invalid assignment, expected integer value.\n", node->node_line);
+				exit(4);
+			}
+		}		
 	}
 
 	if(node->type == AST_VASSIGN){
+		HASH_NODE* n = hash_search(node->symbol->value);
 		if(checkBool(node->son[1])){	
 			fprintf(stderr, "Semantic ERROR on line %d: right operand cannot be logical in vector assignment (>, <, >=, <=, !=, ==, ||, &&, !)\n", node->node_line);
 			exit(4);
+		}
+		if(checkInt(node->son[1])){	
+			if(n->data_type != DATATYPE_BYTE && n->data_type != DATATYPE_SHORT && n->data_type != DATATYPE_LONG){
+				fprintf(stderr, "Semantic ERROR on LINE %d: invalid assignment, expected real value.\n", node->node_line);
+				exit(4);
+			}
+		}
+		else if(checkReal(node->son[1])){
+			if(n->data_type != DATATYPE_FLOAT && n->data_type != DATATYPE_DOUBLE){
+				fprintf(stderr, "Semantic ERROR on LINE %d: invalid assignment, expected integer value.\n", node->node_line);
+				exit(4);
+			}
 		}
 	}
 
@@ -331,10 +357,11 @@ int checkArgs(AST* node, char* func_name){
 	int count = 0;
 
 	while(arg_pointer != NULL){
-		checkArg(arg_pointer->son[0], f, func_name, count);
+		if (arg_pointer->son[0] != NULL && count < f->n_parameters)
+			checkArg(arg_pointer->son[0], f, func_name, count);
 		count++;
 		if(count > f->n_parameters){
-			fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\" \n", f->func->node_line, func_name);
+			fprintf(stderr, "Semantic ERROR on LINE %d: too many arguments passed to function \"%s\". \n", f->func->node_line, func_name);
 			exit(4);
 		}
 		arg_pointer = arg_pointer->son[1];

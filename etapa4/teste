@@ -4,7 +4,7 @@ a: short = 0;
 i: long = 3;
 v: byte[10] 2 3 'c'; 
 //v: long[10] 2 2 3; 
-mat: float[10] 2.1 2;
+mat: float[10] 2.1 2.3;
 f: float = 2.0;
 c: byte = 'x';
 d: byte = 65;
@@ -18,9 +18,10 @@ d: byte = 65;
   
   print " Digite um numero: \n";
   read > i;
-  while (i<10)
+  while (i<2)
     {
-    a = incn(2, a*7);
+    f = 2.2;
+    a = incn(a, 3);
     i = i + (2*3)
     };
   c = voidfunc();

@@ -2,10 +2,10 @@
 
 a: short = 0;
 i: long = 3;
-v: byte[10] 'c' 'v' 'd'; 
-//v: long[10] 1 2 3; 
-mat: long[10]; 
-f: float = 10.55;
+v: byte[10] 2 3 'c'; 
+//v: long[10] 2 2 3; 
+mat: float[10] 2.1 2;
+f: float = 2.0;
 c: byte = 'x';
 d: byte = 65;
 //a = 5;
@@ -14,14 +14,14 @@ d: byte = 65;
   {
   //l = 2;
   a = v[3 + 2];
-  v[2] = v[10-1];
+  v['c'] = v[10-1];
   
   print " Digite um numero: \n";
   read > i;
   while (i<10)
     {
-    a = incn(2/3, a*7 + 4/6);
-    i = i + (2*3 + 3)
+    a = incn(2, a*7);
+    i = i + (2*3)
     };
   c = voidfunc();
   print "Incrementado algumas vezes fica ",a,"\n";

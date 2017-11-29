@@ -4,7 +4,7 @@
 
 TAC* makeIfThen(TAC* code0,TAC* code1);
 
-TAC* tacCreate(int type, HASH_NODE* res,HASH_NODE* op1,HASH_NODE* op2,){
+TAC* tacCreate(int type, HASH_NODE* res,HASH_NODE* op1,HASH_NODE* op2){
     TAC* newtac;
     newtac = (TAC*)calloc(1,sizeof(TAC));
     newtac->type = type;
@@ -16,17 +16,13 @@ TAC* tacCreate(int type, HASH_NODE* res,HASH_NODE* op1,HASH_NODE* op2,){
 
     return newtac;
 }
-TAC* tacGenerator(AST* node){
 
-}
-
-
-TAC* tacJoin(TACD* I1, TAC* I2){
+TAC* tacJoin(TAC* l1, TAC* l2){
   TAC* tac= l2;
   if (!l1) return l2;
   if (!l2) return l1;
   while(tac->prev)
-    tac = tac->prev
+    tac = tac->prev;
 
   tac->prev=l1;
   return l2;
@@ -36,9 +32,9 @@ TAC* tacJoin(TACD* I1, TAC* I2){
 
 void tacPrintSingle(TAC* tac){
   if(!tac)return;
-  if(TAC->type = TAC_SYMBOL)return;
+  if(tac->type == TAC_SYMBOL)return;
 
-  fprintf(stderr, "TAC("));
+  fprintf(stderr, "TAC(");
   switch(tac->type){
     case TAC_SYMBOL: fprintf(stderr,"TAC_SYMBOL");break;
     case TAC_ADD: fprintf(stderr,"TAC_SYMBOL");break;
@@ -50,9 +46,9 @@ void tacPrintSingle(TAC* tac){
   }
 
 
-  if (tac-res) fprintf(stderr,"%s",tac->res->text); else fprintf(stderr,",null");
-  if (tac-op1) fprintf(stderr,"%s",tac->op1->text); else fprintf(stderr,",null");
-  if (tac-op2) fprintf(stderr,"%s",tac->op2->text); else fprintf(stderr,",null");
+  if (tac->res) fprintf(stderr,"%s",tac->res->value); else fprintf(stderr,",null");
+  if (tac->op1) fprintf(stderr,"%s",tac->op1->value); else fprintf(stderr,",null");
+  if (tac->op2) fprintf(stderr,"%s",tac->op2->value); else fprintf(stderr,",null");
   fprintf(stderr,"\n");
 
 
@@ -61,7 +57,7 @@ void tacPrintSingle(TAC* tac){
 
 
 void tacPrintBack(TAC* last){
-  TAc* tac;
+  TAC* tac;
   for (tac = last; tac; tac=tac->prev)
     tacPrintSingle(tac);
 
@@ -72,7 +68,7 @@ void tacPrintBack(TAC* last){
 
 
 
-TAC* tacGenerator(TAC* node){
+TAC* tacGenerator(AST* node){
   TAC* code[MAX_SONS];
   int i;
 
@@ -80,16 +76,16 @@ TAC* tacGenerator(TAC* node){
 
   if(!node) return 0;
   //first generate children
-  for (i=0; i<MAX_SONS, ++i)
-    code[i] = tacGenerator(node->son(i));
+  for (i=0; i<MAX_SONS; ++i)
+    code[i] = tacGenerator(node->son[i]);
 
   switch(node->type){
     case AST_SYMBOL: return tacCreate(TAC_SYMBOL, node->symbol,0,0);break;
-    case AST_ADD: return tacJoin(tacJoin(code[0], code[1])), tacCreate(TAC_ADD, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0);break;
-    case AST_ASS: return tacJoin(code[0],tacCreate(TAC_ASS,node->symbol,code[0]?code[0]->res:0,0));break;
-    case AST_IF: return makeIfThen(code[0],code[1]);break;
+    case AST_ADD: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_ADD, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
+   // case AST_ASS: return tacJoin(code[0],tacCreate(TAC_ASS,node->symbol,code[0]?code[0]->res:0,0));break;
+  //  case AST_IF: return makeIfThen(code[0],code[1]);break;
   }
-  return tacJoin(tacJoin(tacJoin(code[0],code[1],code[2],code[3])));
+  return tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
 
 
 }
@@ -104,7 +100,7 @@ TAC* makeIfThen(TAC* code0,TAC* code1){
   newJumpTac = tacCreate(TAC_JZ,newLabel,code0?code0->res:0,0);
   newLabelTac = tacCreate(TAC_LABEL,newLabel,0,0);
 
-  return tacJoin(tacJoin(tacJoin(code0,tacJumpTac),code1)newLabelTac);
+  return tacJoin(tacJoin(tacJoin(code0,newJumpTac),code1), newLabelTac);
 }
 //no modo dele vaiter que fazer duas passagens, mas nao vamos perceber isso pq o assembler que vai cuidar dessa idiotice
 ///BACKPATCHING lista com pontos de jump para código que ainda nao foi gerado

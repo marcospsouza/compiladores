@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include "hash.h"
 #include "astree.h"
-#include "genco.h"
 
 void semanticSetTypes() ; //recursiva
 void semanticCheckUndeclared(void);
@@ -158,8 +157,7 @@ cmd : atrib { $$ = $1; }
 	| KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd {$$ = astCreate(AST_KWIF, 0, $3, $6, $8, 0);}
 	| KW_IF '(' exp ')' KW_THEN cmd {$$ = astCreate(AST_KWIF, 0, $3, $6, 0, 0);}
 	| KW_RETURN exp {$$ = astCreate(AST_KWRETURN, 0, $2, 0, 0, 0);}
-	| block { $$ = $1;
-	| KW_IF '(' exp ')' cmd {$$ = astCreate(AST_IF,0,$3)} //mod devve ser algo q ja tem kkkkkkkkkkkkkkk
+	| block { $$ = $1;}
 	| {$$ = 0;}
 	;
 

@@ -85,9 +85,9 @@ HASH_NODE* makeTemp(void){
 
 	static int factorySerialNumber = 0;
 	char *nameBuffer[256];
-	sprintf(nameBuffer,"myStressAngeliTemp%d",factorySerialNumber++);
+	sprintf(*nameBuffer,"myStressAngeliTemp%d",factorySerialNumber++);
 
-	hash_insert(SYMBOL_VAR)
+	hash_insert(*nameBuffer, SYMBOL_LABEL);
 
 
 }
@@ -99,9 +99,9 @@ HASH_NODE* makeLabel(void){
 
 	static int factorySerialNumber = 0;
 	char *nameBuffer[256];
-	sprintf(nameBuffer,"LaBle%d",factorySerialNumber++);
+	sprintf(*nameBuffer,"LaBle%d",factorySerialNumber++);
 
-	hash_insert(SYMBOL_LABEL,nameBuffer);
+	hash_insert(*nameBuffer, SYMBOL_LABEL);
 
 
 }

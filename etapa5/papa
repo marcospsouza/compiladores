@@ -1,5 +1,0 @@
-i: long = 0;
-(long) main(r:short, g:long){
-i=i + 2 * 3 > 7 / 8;
-
-}

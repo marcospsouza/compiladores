@@ -1,10 +1,12 @@
 #Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
 
 
-etapa4: y.tab.o lex.yy.o hash.o main.o astree.o semantic.o
-	gcc -o etapa4 y.tab.o lex.yy.o astree.o hash.o main.o semantic.o
+etapa5: y.tab.o lex.yy.o hash.o main.o astree.o semantic.o genco.o
+	gcc -o etapa5 y.tab.o lex.yy.o astree.o hash.o main.o semantic.o genco.o
 
-
+genco.o: genco.c
+	gcc -c genco.c
+	
 astree.o: astree.c
 	gcc -c astree.c
 
@@ -33,4 +35,4 @@ lex.yy.c: scanner.l
 	lex scanner.l
 
 clean:
-	rm *.o lex.yy.c y.tab.c y.tab.h etapa4 y.output
+	rm *.o lex.yy.c y.tab.c y.tab.h etapa5 y.output

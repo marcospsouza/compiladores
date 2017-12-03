@@ -10,8 +10,23 @@
 #define TAC_SUB 3
 #define TAC_MUL 4
 #define TAC_DIV 5
-#define TAC_ASS 6
-#define TAC_JZ 7
+#define TAC_GT 6
+#define TAC_LS 7
+#define TAC_GE 8
+#define TAC_LE 9
+#define TAC_EQ 10
+#define TAC_NE 11
+#define TAC_NOT 12
+#define TAC_AND 13
+#define TAC_OR 14
+
+
+#define TAC_ASS 8
+#define TAC_JZ 9
+
+
+
+
 #define TAC_VECWRITE 8
 #define TAC_VECREAD 9
 #define TAC_INPUT 10

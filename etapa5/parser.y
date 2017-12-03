@@ -6,13 +6,16 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "hash.h"
+#include "genco.h"
+//#include "hash.h"
 #include "astree.h"
+
 
 void semanticSetTypes() ; //recursiva
 void semanticCheckUndeclared(void);
 void semanticCheckUsage();
 void semanticCheckOperands();
+
 
 
 

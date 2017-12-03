@@ -77,31 +77,19 @@ HASH_NODE *hash_search (char *text){
 	return 0;
 }
 
-
-
-
 HASH_NODE* makeTemp(void){
-
-
 	static int factorySerialNumber = 0;
-	char *nameBuffer[256];
-	sprintf(*nameBuffer,"myStressAngeliTemp%d",factorySerialNumber++);
+	char *nameBuffer;
+	nameBuffer = (char *) calloc (256, sizeof(char));
+	sprintf(nameBuffer, "__temp%d", factorySerialNumber++);
 
-	hash_insert(*nameBuffer, SYMBOL_LABEL);
-
-
+	hash_insert(nameBuffer, SYMBOL_VAR);
 }
 
-
-
 HASH_NODE* makeLabel(void){
-
-
 	static int factorySerialNumber = 0;
-	char *nameBuffer[256];
-	sprintf(*nameBuffer,"LaBle%d",factorySerialNumber++);
-
-	hash_insert(*nameBuffer, SYMBOL_LABEL);
-
-
+	char *nameBuffer;
+	nameBuffer = (char *) calloc (256, sizeof(char));
+	sprintf(nameBuffer, "__label%d", factorySerialNumber++);
+	hash_insert(nameBuffer, SYMBOL_LABEL);
 }

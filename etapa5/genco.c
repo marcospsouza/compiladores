@@ -58,12 +58,9 @@ void tacPrintSingle(TAC* tac){
 
 void tacPrintBack(TAC* last){
   TAC* tac;
-  for (tac = last; tac; tac=tac->prev)
+  for (tac = last; tac != NULL; tac=tac->prev){
     tacPrintSingle(tac);
-
-
-
-
+  }
 }
 
 
@@ -72,16 +69,34 @@ TAC* tacGenerator(AST* node){
   TAC* code[MAX_SONS];
   int i;
 
-
+//  fprintf(stderr, "eita ");
+ // fprintf(stderr, "%d\n", node->type);
+  //fprintf(stderr, "nosqvoabruxaum %d\n", node->node_line);
 
   if(!node) return 0;
   //first generate children
-  for (i=0; i<MAX_SONS; ++i)
+  for (i=0; i<MAX_SONS; ++i){
     code[i] = tacGenerator(node->son[i]);
+  }
+
+
 
   switch(node->type){
     case AST_SYMBOL: return tacCreate(TAC_SYMBOL, node->symbol,0,0);break;
     case AST_ADD: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_ADD, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
+    case AST_SUB: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_SUB, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
+    case AST_MUL: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_MUL, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
+    case AST_DIV: return tacJoin(tacJoin(code[0], code[1]), tacCreate(AST_DIV, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
+    case AST_GT: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_GT, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_LS: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_LS, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_NOT: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_NOT, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_LE: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_LE, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_GE: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_GE, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_EQ: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_EQ, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_NE: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_NE, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_AND: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_AND, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+    case AST_OR: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_OR, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
+
    // case AST_ASS: return tacJoin(code[0],tacCreate(TAC_ASS,node->symbol,code[0]?code[0]->res:0,0));break;
   //  case AST_IF: return makeIfThen(code[0],code[1]);break;
   }
@@ -95,7 +110,7 @@ TAC* makeIfThen(TAC* code0,TAC* code1){
 
   HASH_NODE* newLabel;
 
-  newLabel = makeLabel();
+ // newLabel = makeLabel();
 
   newJumpTac = tacCreate(TAC_JZ,newLabel,code0?code0->res:0,0);
   newLabelTac = tacCreate(TAC_LABEL,newLabel,0,0);

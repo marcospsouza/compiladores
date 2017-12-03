@@ -53,6 +53,12 @@ void tacPrintSingle(TAC* tac){
     case TAC_JZ: fprintf(stderr,"TAC_JZ");break;
     case TAC_LABEL: fprintf(stderr,"TAC_LABEL");break;
     case TAC_ASSIGN: fprintf(stderr,"TAC_ASSIGN");break;
+    case TAC_VASSIGN: fprintf(stderr, "TAC_VASSIGN");break;
+    case TAC_VACCESS: fprintf(stderr, "TAC_VACESS");break;
+    case TAC_PRINT: fprintf(stderr, "TAC_PRINT");break;
+    case TAC_PRINTARG: fprintf(stderr, "TAC_PRINTARG");break;
+    case TAC_READ: fprintf(stderr, "TAC_READ");break;
+    case TAC_RETURN: fprintf(stderr, "TAC_RETURN");break;
     default: fprintf(stderr,"UNKNOWN");break;
 
 
@@ -82,10 +88,6 @@ TAC* tacGenerator(AST* node){
   TAC* code[MAX_SONS];
   int i;
 
-//  fprintf(stderr, "eita ");
- // fprintf(stderr, "%d\n", node->type);
-  //fprintf(stderr, "nosqvoabruxaum %d\n", node->node_line);
-
   if(!node) return 0;
   //first generate children
   for (i=0; i<MAX_SONS; ++i){
@@ -111,10 +113,31 @@ TAC* tacGenerator(AST* node){
     case AST_OR: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_OR, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
 
     case AST_ASSIGN: return tacJoin(code[0],tacCreate(TAC_ASSIGN,node->symbol,code[0]?code[0]->res:0,0));break;
+    case AST_VASSIGN: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_VASSIGN, node->symbol, code[1]?code[1]->res:0, code[0]?code[0]->res:0)); break; 
+    case AST_VACCESS: return tacJoin(code[0], tacCreate(TAC_VACCESS, makeTemp(), node->symbol, code[0]?code[0]->res:0)); break;
     case AST_KWIF: return makeIfThen(code[0],code[1]);break;
+
+    case AST_KWPRINT: return tacCreate(TAC_PRINT, node->symbol, 0, 0); break;
+    case AST_PRINTARGS: return tacJoin(tacCreate(TAC_PRINTARG, code[0]?code[0]->res:0, 0, 0), code[1]);break;
+    case AST_KWREAD: return tacCreate(TAC_READ, node->symbol, 0, 0); break;
+
+    //case AST_WHILE: return makeWhile(code[0], code[1]); break;
+
+    case AST_KWRETURN: return tacJoin(code[0], tacCreate(TAC_RETURN, code[0]?code[0]->res:0, 0, 0)); break;
+    
+    //case AST_FUNC_DEC: return makeFun(node->symbol, code[3]); break;
+    //inserts the name of the function to its arguments here
+    //case AST_FUNC_CALL: aux_tac = tacJoin(code[0], tacCreate(TAC_CALL, node->symbol, 0, 0)); updateFuncArgs(aux_tac, node->symbol); return aux_tac; break;
+    //at first creates TAC_ARG without its owner function
+    //case AST_FUNPARAML: return tacJoin(tacJoin(code[0], tacCreate(TAC_ARG, 0, code[0]?code[0]->res:0, 0)), code[1]); break;
+
   }
   return tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
 
+
+}
+
+TAC* makeWhile(TAC* code0, TAC* code1){
 
 }
 TAC* makeIfThen(TAC* code0,TAC* code1){

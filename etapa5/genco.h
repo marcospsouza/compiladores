@@ -20,10 +20,15 @@
 #define TAC_AND 13
 #define TAC_OR 14
 #define TAC_ASSIGN 15
+#define TAC_VASSIGN 16
+#define TAC_VACCESS 17
+#define TAC_PRINT 18
+#define TAC_PRINTARG 19
+#define TAC_READ 20
+#define TAC_RETURN 21
 
-
-#define TAC_JZ 16
-#define TAC_LABEL 17
+#define TAC_JZ 30
+#define TAC_LABEL 31
 
 
 
@@ -32,7 +37,7 @@
 #define TAC_VECREAD 9
 #define TAC_INPUT 10
 #define TAC_OUPUT 11//uma pra cada parametro do printf
-#define TAC_RETURN 12
+
 #define TAC_JMP 13
 #define TAC_BEGINFUN 15
 #define TAC_ENDFUN 16

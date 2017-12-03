@@ -37,9 +37,22 @@ void tacPrintSingle(TAC* tac){
   fprintf(stderr, "TAC(");
   switch(tac->type){
     case TAC_SYMBOL: fprintf(stderr,"TAC_SYMBOL");break;
-    case TAC_ADD: fprintf(stderr,"TAC_SYMBOL");break;
-    case TAC_MUL: fprintf(stderr,"TAC_SYMBOL");break;
-    case TAC_SUB: fprintf(stderr,"TAC_SYMBOL");break;
+    case TAC_ADD: fprintf(stderr,"TAC_ADD");break;
+    case TAC_SUB: fprintf(stderr,"TAC_SUB");break;
+    case TAC_MUL: fprintf(stderr,"TAC_MUL");break;
+    case TAC_DIV: fprintf(stderr,"TAC_DIV");break;
+    case TAC_GT: fprintf(stderr,"TAC_GT");break;  
+    case TAC_LS: fprintf(stderr,"TAC_LS");break; 
+    case TAC_NOT: fprintf(stderr,"TAC_NOT");break;
+    case TAC_LE: fprintf(stderr,"TAC_LE");break; 
+    case TAC_GE: fprintf(stderr,"TAC_GE");break; 
+    case TAC_EQ: fprintf(stderr,"TAC_EQ");break;
+    case TAC_NE: fprintf(stderr,"TAC_NE");break;
+    case TAC_AND: fprintf(stderr,"TAC_AND");break;
+    case TAC_OR: fprintf(stderr,"TAC_OR");break;
+    case TAC_JZ: fprintf(stderr,"TAC_JZ");break;
+    case TAC_LABEL: fprintf(stderr,"TAC_LABEL");break;
+    case TAC_ASSIGN: fprintf(stderr,"TAC_ASSIGN");break;
     default: fprintf(stderr,"UNKNOWN");break;
 
 
@@ -97,8 +110,8 @@ TAC* tacGenerator(AST* node){
     case AST_AND: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_AND, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
     case AST_OR: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_OR, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
 
-   // case AST_ASS: return tacJoin(code[0],tacCreate(TAC_ASS,node->symbol,code[0]?code[0]->res:0,0));break;
-  //  case AST_IF: return makeIfThen(code[0],code[1]);break;
+    case AST_ASSIGN: return tacJoin(code[0],tacCreate(TAC_ASSIGN,node->symbol,code[0]?code[0]->res:0,0));break;
+    case AST_KWIF: return makeIfThen(code[0],code[1]);break;
   }
   return tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
 
@@ -110,7 +123,7 @@ TAC* makeIfThen(TAC* code0,TAC* code1){
 
   HASH_NODE* newLabel;
 
- // newLabel = makeLabel();
+  newLabel = makeLabel();
 
   newJumpTac = tacCreate(TAC_JZ,newLabel,code0?code0->res:0,0);
   newLabelTac = tacCreate(TAC_LABEL,newLabel,0,0);

@@ -29,8 +29,9 @@
 
 #define TAC_JZ 30
 #define TAC_LABEL 31
-
-
+#define TAC_JMP 32
+#define TAC_BEGINFUN 33
+#define TAC_ENDFUN 34
 
 
 #define TAC_VECWRITE 8
@@ -38,11 +39,11 @@
 #define TAC_INPUT 10
 #define TAC_OUPUT 11//uma pra cada parametro do printf
 
-#define TAC_JMP 13
-#define TAC_BEGINFUN 15
-#define TAC_ENDFUN 16
+
+
 #define TAC_CALL 17
 #define TAC_ARG 18////não sei se existe realmente
+
 
 //argumetno 0 da função f, argumento 1 da funçao f,. ... gera uuns temp safado
 
@@ -72,5 +73,8 @@ TAC* tacCreate(int type, HASH_NODE* res,HASH_NODE* op1,HASH_NODE* op2);
 TAC* tacGenerator(AST* node);
 TAC* tacJoin(TAC* l1, TAC* l2);
 void tacPrintBack(TAC* last);
+TAC* makeWhile(TAC* code0, TAC* code1);
+TAC* makeIfThen(TAC* code0,TAC* code1);
+TAC* makeFun(HASH_NODE* f, TAC* c);
 
 #endif

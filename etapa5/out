@@ -5,43 +5,13 @@ mat: long[10];
 f: float = 10.55;
 c: byte = 'x';
 d: byte = 65;
+l: long = 0;
 (long) main(r:short, g:long){
-a=v[3 + 2];
-v[2] =v[10 - 1];
-print " Digite um numero: \n";
-read > i;
-while (i < 10)
+while (i > 1)
 	{
-a=incn(2 / 3, a * 7 + 4 / 6, );
-i=i + ( 2 * 3 + 3 )
-};
-c=voidfunc();
-print "Incrementado algumas vezes fica ", a, "\n";
-if (a == 5 && i == 2) then
-	{
-print "Parou no meio\n";
+i=i + 1;
 
 }
-;
-if (a == 11) then
-	
-;
-if (a == 11) then
-	{
-
-}
-;
-;
-;
-;
-{
-;
-
-};
-{
-
-};
-
 }
 (long) incn(x:long, n:long){
 return ( x + n )

@@ -41,11 +41,11 @@ void tacPrintSingle(TAC* tac){
     case TAC_SUB: fprintf(stderr,"TAC_SUB");break;
     case TAC_MUL: fprintf(stderr,"TAC_MUL");break;
     case TAC_DIV: fprintf(stderr,"TAC_DIV");break;
-    case TAC_GT: fprintf(stderr,"TAC_GT");break;  
-    case TAC_LS: fprintf(stderr,"TAC_LS");break; 
+    case TAC_GT: fprintf(stderr,"TAC_GT");break;
+    case TAC_LS: fprintf(stderr,"TAC_LS");break;
     case TAC_NOT: fprintf(stderr,"TAC_NOT");break;
-    case TAC_LE: fprintf(stderr,"TAC_LE");break; 
-    case TAC_GE: fprintf(stderr,"TAC_GE");break; 
+    case TAC_LE: fprintf(stderr,"TAC_LE");break;
+    case TAC_GE: fprintf(stderr,"TAC_GE");break;
     case TAC_EQ: fprintf(stderr,"TAC_EQ");break;
     case TAC_NE: fprintf(stderr,"TAC_NE");break;
     case TAC_AND: fprintf(stderr,"TAC_AND");break;
@@ -59,6 +59,9 @@ void tacPrintSingle(TAC* tac){
     case TAC_PRINTARG: fprintf(stderr, "TAC_PRINTARG");break;
     case TAC_READ: fprintf(stderr, "TAC_READ");break;
     case TAC_RETURN: fprintf(stderr, "TAC_RETURN");break;
+    case TAC_JMP: fprintf(stderr, "TAC_JMP");break;
+    case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGFUN");break;
+    case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN");break;
     default: fprintf(stderr,"UNKNOWN");break;
 
 
@@ -113,7 +116,7 @@ TAC* tacGenerator(AST* node){
     case AST_OR: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_OR, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
 
     case AST_ASSIGN: return tacJoin(code[0],tacCreate(TAC_ASSIGN,node->symbol,code[0]?code[0]->res:0,0));break;
-    case AST_VASSIGN: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_VASSIGN, node->symbol, code[1]?code[1]->res:0, code[0]?code[0]->res:0)); break; 
+    case AST_VASSIGN: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_VASSIGN, node->symbol, code[1]?code[1]->res:0, code[0]?code[0]->res:0)); break;
     case AST_VACCESS: return tacJoin(code[0], tacCreate(TAC_VACCESS, makeTemp(), node->symbol, code[0]?code[0]->res:0)); break;
     case AST_KWIF: return makeIfThen(code[0],code[1]);break;
 
@@ -121,11 +124,12 @@ TAC* tacGenerator(AST* node){
     case AST_PRINTARGS: return tacJoin(tacCreate(TAC_PRINTARG, code[0]?code[0]->res:0, 0, 0), code[1]);break;
     case AST_KWREAD: return tacCreate(TAC_READ, node->symbol, 0, 0); break;
 
-    //case AST_WHILE: return makeWhile(code[0], code[1]); break;
+    case AST_KWWHILE: return makeWhile(code[0], code[1]); break;
 
     case AST_KWRETURN: return tacJoin(code[0], tacCreate(TAC_RETURN, code[0]?code[0]->res:0, 0, 0)); break;
-    
-    //case AST_FUNC_DEC: return makeFun(node->symbol, code[3]); break;
+
+    case AST_FUNDEC: fprintf(stderr,"\n\nfunc\n\n");return makeFun(node->symbol, code[3]);break;
+
     //inserts the name of the function to its arguments here
     //case AST_FUNC_CALL: aux_tac = tacJoin(code[0], tacCreate(TAC_CALL, node->symbol, 0, 0)); updateFuncArgs(aux_tac, node->symbol); return aux_tac; break;
     //at first creates TAC_ARG without its owner function
@@ -139,7 +143,25 @@ TAC* tacGenerator(AST* node){
 
 TAC* makeWhile(TAC* code0, TAC* code1){
 
+  TAC* finalTacJump = 0;
+  TAC* finalTacLabel = 0;
+  HASH_NODE* label_final;
+  label_final = makeLabel();
+  finalTacLabel = tacCreate(TAC_LABEL,label_final,0,0);
+  finalTacJump = tacCreate(TAC_JZ,label_final,code0?code0->res:0,0);
+
+  TAC* initialTacJump = 0;
+  TAC* initialTacLabel = 0;
+  HASH_NODE* label_initial;
+  label_initial = makeLabel();
+  initialTacLabel = tacCreate(TAC_LABEL,label_initial,0,0);
+  initialTacJump = tacCreate(TAC_JMP,label_initial,code0?code0->res:0,0);
+
+
+
+  return tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(initialTacLabel,code0),finalTacJump),code1),initialTacJump),finalTacLabel);
 }
+
 TAC* makeIfThen(TAC* code0,TAC* code1){
   TAC* newJumpTac = 0;
   TAC* newLabelTac = 0;
@@ -152,6 +174,20 @@ TAC* makeIfThen(TAC* code0,TAC* code1){
   newLabelTac = tacCreate(TAC_LABEL,newLabel,0,0);
 
   return tacJoin(tacJoin(tacJoin(code0,newJumpTac),code1), newLabelTac);
+}
+
+
+TAC* makeFun(HASH_NODE* f, TAC* c){
+  fprintf(stderr, "eita nois\n");
+  TAC* beginFunTac = 0;
+  TAC* endFunTac = 0;
+
+
+beginFunTac = tacCreate(TAC_BEGINFUN, f, 0, 0);
+  endFunTac = tacCreate(TAC_ENDFUN, f, 0, 0);
+
+
+  return tacJoin(tacJoin(beginFunTac, c), endFunTac);
 }
 //no modo dele vaiter que fazer duas passagens, mas nao vamos perceber isso pq o assembler que vai cuidar dessa idiotice
 ///BACKPATCHING lista com pontos de jump para código que ainda nao foi gerado

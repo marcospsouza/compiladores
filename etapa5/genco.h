@@ -26,23 +26,13 @@
 #define TAC_PRINTARG 19
 #define TAC_READ 20
 #define TAC_RETURN 21
+#define TAC_FUNCALL 22
 
 #define TAC_JZ 30
 #define TAC_LABEL 31
 #define TAC_JMP 32
 #define TAC_BEGINFUN 33
 #define TAC_ENDFUN 34
-
-
-#define TAC_VECWRITE 8
-#define TAC_VECREAD 9
-#define TAC_INPUT 10
-#define TAC_OUPUT 11//uma pra cada parametro do printf
-
-
-
-#define TAC_CALL 17
-#define TAC_ARG 18////não sei se existe realmente
 
 
 //argumetno 0 da função f, argumento 1 da funçao f,. ... gera uuns temp safado

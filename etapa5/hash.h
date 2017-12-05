@@ -26,6 +26,7 @@ struct node
 {
 	char *value; //*text
 	int tk_type; //type
+	int data_type;
 	int node_line;
 	struct node *next;
 };

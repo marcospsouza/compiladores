@@ -12,6 +12,8 @@ int getLineNumber();
 
 
 AST* astCreate(int type, HASH_NODE *symbol, AST* son0, AST* son1, AST* son2,AST* son3){
+	/*if(type == AST_FUNDEC)
+		fprintf(stderr,"fundec\n");*/
 	AST* newnode;
 	newnode =  (AST*)calloc(1,sizeof(AST));
 	newnode->type = type;
@@ -24,11 +26,14 @@ AST* astCreate(int type, HASH_NODE *symbol, AST* son0, AST* son1, AST* son2,AST*
 	return newnode;
 }
 
-//não copiada 100%
 void astPrint(AST * node,int level){
 	int i;
-
+	
 	if(node){
+		/*if(node->type == AST_FUNDEC)
+			fprintf(stderr,"fundec");
+
+		return;*/
 		for(i=0; i < level; i++)
 			fprintf(stderr, " ");
 

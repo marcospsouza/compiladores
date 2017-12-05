@@ -60,7 +60,7 @@ void tacPrintSingle(TAC* tac){
     case TAC_READ: fprintf(stderr, "TAC_READ");break;
     case TAC_RETURN: fprintf(stderr, "TAC_RETURN");break;
     case TAC_JMP: fprintf(stderr, "TAC_JMP");break;
-    case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGFUN");break;
+    case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN");break;
     case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN");break;
     default: fprintf(stderr,"UNKNOWN");break;
 
@@ -97,8 +97,6 @@ TAC* tacGenerator(AST* node){
     code[i] = tacGenerator(node->son[i]);
   }
 
-
-
   switch(node->type){
     case AST_SYMBOL: return tacCreate(TAC_SYMBOL, node->symbol,0,0);break;
     case AST_ADD: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_ADD, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
@@ -128,7 +126,7 @@ TAC* tacGenerator(AST* node){
 
     case AST_KWRETURN: return tacJoin(code[0], tacCreate(TAC_RETURN, code[0]?code[0]->res:0, 0, 0)); break;
 
-    case AST_FUNDEC: fprintf(stderr,"\n\nfunc\n\n");return makeFun(node->symbol, code[3]);break;
+    case AST_FUNDEC: return makeFun(node->symbol, code[3]);break;
 
     //inserts the name of the function to its arguments here
     //case AST_FUNC_CALL: aux_tac = tacJoin(code[0], tacCreate(TAC_CALL, node->symbol, 0, 0)); updateFuncArgs(aux_tac, node->symbol); return aux_tac; break;
@@ -145,15 +143,13 @@ TAC* makeWhile(TAC* code0, TAC* code1){
 
   TAC* finalTacJump = 0;
   TAC* finalTacLabel = 0;
-  HASH_NODE* label_final;
-  label_final = makeLabel();
+  HASH_NODE* label_final = makeLabel();
   finalTacLabel = tacCreate(TAC_LABEL,label_final,0,0);
   finalTacJump = tacCreate(TAC_JZ,label_final,code0?code0->res:0,0);
 
   TAC* initialTacJump = 0;
   TAC* initialTacLabel = 0;
-  HASH_NODE* label_initial;
-  label_initial = makeLabel();
+  HASH_NODE* label_initial = makeLabel();
   initialTacLabel = tacCreate(TAC_LABEL,label_initial,0,0);
   initialTacJump = tacCreate(TAC_JMP,label_initial,code0?code0->res:0,0);
 
@@ -166,9 +162,7 @@ TAC* makeIfThen(TAC* code0,TAC* code1){
   TAC* newJumpTac = 0;
   TAC* newLabelTac = 0;
 
-  HASH_NODE* newLabel;
-
-  newLabel = makeLabel();
+  HASH_NODE* newLabel = makeLabel();
 
   newJumpTac = tacCreate(TAC_JZ,newLabel,code0?code0->res:0,0);
   newLabelTac = tacCreate(TAC_LABEL,newLabel,0,0);
@@ -178,14 +172,11 @@ TAC* makeIfThen(TAC* code0,TAC* code1){
 
 
 TAC* makeFun(HASH_NODE* f, TAC* c){
-  fprintf(stderr, "eita nois\n");
   TAC* beginFunTac = 0;
   TAC* endFunTac = 0;
 
-
-beginFunTac = tacCreate(TAC_BEGINFUN, f, 0, 0);
+  beginFunTac = tacCreate(TAC_BEGINFUN, f, 0, 0);
   endFunTac = tacCreate(TAC_ENDFUN, f, 0, 0);
-
 
   return tacJoin(tacJoin(beginFunTac, c), endFunTac);
 }

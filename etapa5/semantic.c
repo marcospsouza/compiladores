@@ -37,11 +37,11 @@ void semanticSetTypes(AST* node){
 		}
 		else{
 			node->symbol->tk_type = SYMBOL_VAR;
-			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
-			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
-			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
-			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
-			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+			if(node->son[0]->type == AST_KWBYTE) node->symbol->data_type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->symbol->data_type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->symbol->data_type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->symbol->data_type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->symbol->data_type = DATATYPE_DOUBLE;
 		}
 	}
 	if(node->type == AST_VECDEC){
@@ -51,11 +51,11 @@ void semanticSetTypes(AST* node){
 		}
 		else{
 			node->symbol->tk_type = SYMBOL_VEC;
-			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
-			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
-			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
-			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
-			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+			if(node->son[0]->type == AST_KWBYTE) node->symbol->data_type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->symbol->data_type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->symbol->data_type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->symbol->data_type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->symbol->data_type = DATATYPE_DOUBLE;
 		}
 	}
 	if (node->type == AST_FUNDEC){
@@ -66,11 +66,11 @@ void semanticSetTypes(AST* node){
 		else{
 			node->symbol->tk_type = SYMBOL_FUN;
 			newFunc(node->symbol);
-			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
-			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
-			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
-			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
-			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+			if(node->son[0]->type == AST_KWBYTE) node->symbol->data_type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->symbol->data_type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->symbol->data_type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->symbol->data_type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->symbol->data_type = DATATYPE_DOUBLE;
 		}
 	}
 	if(node->type == AST_ARGSDEF){
@@ -81,11 +81,11 @@ void semanticSetTypes(AST* node){
 		else{
 			node->symbol->tk_type = SYMBOL_VAR;
 			functions_list.tail->n_parameters +=1;
-			if(node->son[0]->type == AST_KWBYTE) node->type = DATATYPE_BYTE;
-			if(node->son[0]->type == AST_KWSHORT) node->type = DATATYPE_SHORT;
-			if(node->son[0]->type == AST_KWLONG) node->type = DATATYPE_LONG;
-			if(node->son[0]->type == AST_KWFLOAT) node->type = DATATYPE_FLOAT;
-			if(node->son[0]->type == AST_KWDOUBLE) node->type = DATATYPE_DOUBLE;
+			if(node->son[0]->type == AST_KWBYTE) node->symbol->data_type = DATATYPE_BYTE;
+			if(node->son[0]->type == AST_KWSHORT) node->symbol->data_type = DATATYPE_SHORT;
+			if(node->son[0]->type == AST_KWLONG) node->symbol->data_type = DATATYPE_LONG;
+			if(node->son[0]->type == AST_KWFLOAT) node->symbol->data_type = DATATYPE_FLOAT;
+			if(node->son[0]->type == AST_KWDOUBLE) node->symbol->data_type = DATATYPE_DOUBLE;
 		}
 	}
 

@@ -62,6 +62,8 @@ void tacPrintSingle(TAC* tac){
     case TAC_JMP: fprintf(stderr, "TAC_JMP");break;
     case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN");break;
     case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN");break;
+    case TAC_FUNCALL: fprintf(stderr, "TAC_FUNCALL");break;
+    case TAC_ARG: fprintf(stderr, "TAC_ARG");break;
     default: fprintf(stderr,"UNKNOWN");break;
 
 
@@ -97,6 +99,10 @@ TAC* tacGenerator(AST* node){
     code[i] = tacGenerator(node->son[i]);
   }
 
+
+
+  TAC* funcall_TAC;
+  TAC* arg;
   switch(node->type){
     case AST_SYMBOL: return tacCreate(TAC_SYMBOL, node->symbol,0,0);break;
     case AST_ADD: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_ADD, makeTemp(),code[0]?code[0]->res:0,code[1]?code[1]->res:0));break;
@@ -128,11 +134,21 @@ TAC* tacGenerator(AST* node){
 
     case AST_FUNDEC: return makeFun(node->symbol, code[3]);break;
 
-    //inserts the name of the function to its arguments here
-    //case AST_FUNC_CALL: aux_tac = tacJoin(code[0], tacCreate(TAC_CALL, node->symbol, 0, 0)); updateFuncArgs(aux_tac, node->symbol); return aux_tac; break;
-    //at first creates TAC_ARG without its owner function
-    //case AST_FUNPARAML: return tacJoin(tacJoin(code[0], tacCreate(TAC_ARG, 0, code[0]?code[0]->res:0, 0)), code[1]); break;
+    case AST_FUNCALL: 
+      funcall_TAC = tacJoin(code[0], tacCreate(TAC_FUNCALL, node->symbol, 0, 0));
+      arg = funcall_TAC;
+      
+      if(arg != NULL){
+        while(arg->prev != NULL){
+          arg = arg->prev;
+          if(arg->type == TAC_ARG)
+            arg->res = node->symbol;
+        }
+      }
+      return funcall_TAC;
+      break;
 
+    case AST_ARGS: return tacJoin(tacJoin(code[0], tacCreate(TAC_ARG, 0, code[0]?code[0]->res:0, 0)), code[1]); break;
   }
   return tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
 

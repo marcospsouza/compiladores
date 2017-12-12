@@ -1,0 +1,45 @@
+// UFRGS - Compiladores - Marcelo Johann - 2017/2
+
+a: short = 0;
+i: long = 3;
+v: byte[10] 'c' 'v' 'd'; 
+//v: long[10] 1 2 3; 
+mat: long[10]; 
+f: float = 10.55;
+c: byte = 'x';
+d: byte = 65;
+//a = 5;
+
+(long) main(r: short, g: long)
+  {
+  //l = 2;
+  a = v[3 + 2];
+  v[2] = v[10-1];
+  
+  print " Digite um numero: \n";
+  read > i;
+  while (i<10)
+    {
+    a = incn(2/3, a*7 + 4/6);
+    i = i + (2*3 + 3)
+    };
+  c = voidfunc();
+  print "Incrementado algumas vezes fica ",a,"\n";
+  if (a==5 && i == 2) then 
+    { print "Parou no meio\n"; };
+  if (a==11) then
+    ;
+  if (a==11) then {} else
+    ;
+  ;;;
+  {;};
+  {};
+  }
+
+(long) incn (x: long, n: long)
+  {return (x+n)}
+
+(short) voidfunc() {}
+  
+
+

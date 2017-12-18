@@ -18,11 +18,12 @@ void semanticCheckUsage(AST* node);
 void semanticCheckOperands(AST* node);
 
 int checkInt(AST* node);
+int checkReal(AST* node);
 int checkArgs(AST* node, char* func_name);
 typedef struct func_info{
 	HASH_NODE *func;
 	int n_parameters;
-	                                                                                           
+	int p_types[20];                                                                       
 	struct func_info* next;
 
 }FUNC_INFO;
@@ -35,8 +36,6 @@ typedef struct func_list{
 }FUNC_LIST;
 
 FUNC_LIST functions_list;
-
-
 
 void newFunc(HASH_NODE *func);
 FUNC_INFO* searchFunc(char *func_name);

@@ -13,7 +13,7 @@ read > i;
 while (i < 10)
 	{
 a=incn(2 / 3, a * 7 + 4 / 6, );
-i=i + ( 2 * 3 + 3 )
+i=i + ( 2 * 3 + 3 > 2 )
 };
 c=voidfunc();
 print "Incrementado algumas vezes fica ", a, "\n";

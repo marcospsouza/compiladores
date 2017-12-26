@@ -28,6 +28,8 @@
 #define TAC_RETURN 21
 #define TAC_FUNCALL 22
 #define TAC_ARG 23
+#define TAC_VARDEC 24
+#define TAC_VECDEC 25
 
 #define TAC_JZ 30
 #define TAC_LABEL 31

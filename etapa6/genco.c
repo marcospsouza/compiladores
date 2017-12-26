@@ -64,6 +64,8 @@ void tacPrintSingle(TAC* tac){
     case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN");break;
     case TAC_FUNCALL: fprintf(stderr, "TAC_FUNCALL");break;
     case TAC_ARG: fprintf(stderr, "TAC_ARG");break;
+    case TAC_VARDEC: fprintf(stderr, "TAC_VARDEC");break;
+    case TAC_VECDEC: fprintf(stderr, "TAC_VECDEC");break;
     default: fprintf(stderr,"UNKNOWN");break;
 
 
@@ -150,6 +152,9 @@ TAC* tacGenerator(AST* node){
       break;
 
     case AST_ARGS: return tacJoin(tacJoin(code[0], tacCreate(TAC_ARG, 0, code[0]?code[0]->res:0, 0)), code[1]); break;
+    case AST_VARDEC: return tacJoin(code[0], tacCreate(TAC_VARDEC, node->symbol, code[1]?code[1]->res:0, 0)); break;
+    case AST_VECDEC: return tacJoin(code[0], tacCreate(TAC_VECDEC, node->symbol, code[1]?code[1]->res:0, 0)); break;
+
   }
   return tacJoin(tacJoin(tacJoin(code[0],code[1]),code[2]),code[3]);
 
@@ -207,22 +212,25 @@ TAC* makeFun(HASH_NODE* f, TAC* c){
 
 
 
-TAC* tacReverse(TAC*last){
-  if(!last)
-    return 0;
-  while(last->prev){
-    last->prev->next = last;
-    last = last->prev;
+TAC* tacReverse(TAC* last){
+  TAC* aux_tac, *curr_tac;
+
+  if(!last) return last;
+
+  aux_tac = last;
+  for(curr_tac = last->prev; curr_tac; curr_tac = curr_tac->prev){
+    curr_tac->next = aux_tac;
+    aux_tac = aux_tac->prev;
   }
 
+  return aux_tac;
 }
-
 
 
 
 
 void tacPrintForward(TAC* last){
   TAC* tac;
-  for(tac = ) //nunca voltou pra cá, RIP
-    tacPrint
+  for(tac = last; tac != NULL; tac = tac->next) 
+    tacPrintSingle(tac);
 }

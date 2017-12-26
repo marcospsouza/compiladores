@@ -1,5 +1,30 @@
 // UFRGS - Compiladores - Marcelo Johann - 2017/2
 
+i: short = 0;
+(long) main()
+{
+  
+  print "João\n";
+  print "Marcos\n"
+
+  while(i < 5){
+    print "While i < 5";
+    i = i + 1;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 a: short = 0;
 i: long = 3;
 v: byte[10] 'c' 'v' 'd'; 
@@ -42,4 +67,4 @@ d: byte = 65;
 (short) voidfunc() {}
   
 
-
+*/

@@ -5,10 +5,11 @@ i: short = 0;
 {
   
   print "João\n";
-  print "Marcos\n"
+  print "Marcos\n";
 
-  while(i < 5){
-    print "While i < 5";
+  while (i < 5)
+  {
+    print "While i < 5\n";
     i = i + 1;
   }
 }

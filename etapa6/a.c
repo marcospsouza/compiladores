@@ -20,10 +20,7 @@ int main(){
 }*/
 
 int i = 0;
-
+int a = 2;
 int main(){
-	while(i < 5){
-		printf("while");
-		i = i + 1;
-	}
+	i = a + a;
 }

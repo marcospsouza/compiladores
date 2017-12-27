@@ -6,9 +6,13 @@
 	.size	i, 4
 i:
 	.zero	4
-	.section	.rodata
-.LC0:
-	.string	"while"
+	.globl	a
+	.data
+	.align 4
+	.type	a, @object
+	.size	a, 4
+a:
+	.long	2
 	.text
 	.globl	main
 	.type	main, @function
@@ -20,18 +24,10 @@ main:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	jmp	.L2
-.L3:
-	movl	$.LC0, %edi
-	movl	$0, %eax
-	call	printf
-	movl	i(%rip), %eax
-	addl	$1, %eax
+	movl	a(%rip), %edx
+	movl	a(%rip), %eax
+	addl	%edx, %eax
 	movl	%eax, i(%rip)
-.L2:
-	movl	i(%rip), %eax
-	cmpl	$4, %eax
-	jle	.L3
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8

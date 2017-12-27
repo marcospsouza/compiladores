@@ -22,5 +22,10 @@ int main(){
 int i = 0;
 int a = 2;
 int main(){
-	i = a + a;
+	if(a > i){
+
+	}
+	else{
+		
+	}
 }

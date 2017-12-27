@@ -24,10 +24,6 @@ main:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	movl	a(%rip), %edx
-	movl	a(%rip), %eax
-	addl	%edx, %eax
-	movl	%eax, i(%rip)
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8

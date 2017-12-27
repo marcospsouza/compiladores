@@ -97,10 +97,52 @@ void asmGenerator(char *filename, TAC* code){
   						if (tac->op2->tk_type == LIT_INTEGER)
   							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
   						else 
-  							fprintf(fout, "\tmovl $s(%%rip), %%eax\n", tac->op2->value);
+  							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
   						fprintf(fout, "\taddl %%edx, %%eax\n");
   						fprintf(fout, "\tmovl %%eax, %s(%%rip)\n", tac->res->value);
   				break;
+
+  			case TAC_SUB: fprintf(fout,"\n##SUB\n");
+  						if (tac->op1->tk_type == LIT_INTEGER)
+  							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+  						else 
+  							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+  						if (tac->op2->tk_type == LIT_INTEGER)
+  							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+  						else 
+  							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+  						fprintf(fout, "\tsubl %%edx, %%eax\n");
+  						fprintf(fout, "\tmovl %%eax, %s(%%rip)\n", tac->res->value);
+  				break;
+
+  			case TAC_MUL: fprintf(fout,"\n##MUL\n");
+  						if (tac->op1->tk_type == LIT_INTEGER)
+  							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+  						else 
+  							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+  						if (tac->op2->tk_type == LIT_INTEGER)
+  							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+  						else 
+  							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+  						fprintf(fout, "\timull %%edx, %%eax\n");
+  						fprintf(fout, "\tmovl %%eax, %s(%%rip)\n", tac->res->value);
+  				break;
+
+  			case TAC_DIV: fprintf(fout,"\n##DIV\n");
+  						if (tac->op1->tk_type == LIT_INTEGER)
+  							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op1->value);
+  						else 
+  							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op1->value);
+  						if (tac->op2->tk_type == LIT_INTEGER)
+  							fprintf(fout, "\tmovl $%s, %%ecx\n", tac->op2->value);
+  						else 
+  							fprintf(fout, "\tmovl %s(%%rip), %%ecx\n", tac->op2->value);
+
+  						fprintf(fout, "cltd\n"
+  								"idivl %%ecx\n"
+  								"movl %%eax, %s(%%rip)\n", tac->res->value);
+  				break;
+
 
   			case TAC_ASSIGN: fprintf(fout,"\n##ASSIGN\n");
   						if (tac->op1->tk_type == LIT_INTEGER)

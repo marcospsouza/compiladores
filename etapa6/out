@@ -1,11 +1,12 @@
 i: short = 0;
+a: short = 2;
 (long) main(){
-print "João\n";
-print "Marcos\n";
-while (i < 5)
+if (a > i) then
 	{
-print "While i < 5\n";
-i=i + 1;
+
+}
+else
+	{
 
 }
 }

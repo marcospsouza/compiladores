@@ -24,7 +24,7 @@ void hash_print(){
 	int i;
 	for(i = 0; i < HASH_SIZE; i++){
 	   for(n = table[i]; n != NULL; n = n->next){
-	       printf ("%s\n",n->value);
+	       printf ("%s, %d\n",n->value, n->tk_type);
 	   }
 	}
 	printf("\n");

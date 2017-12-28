@@ -1,24 +1,50 @@
 // UFRGS - Compiladores - Marcelo Johann - 2017/2
 
+ 
+v: short[10];
 i: short = 10;
+b: short[10];
 a: short = 2;
-
 
 (long) main()
 {
+
+
+  b[3] = i;
+
+  v[5] = 2;
+
+  v[6] = b[3];
+
+  v[0] = f();
+
+
+  if(b[3] == 10) then{
+    print "b[3] == 10\n"
+  };
+
+  if(v[5] == 2) then{
+    print "v[5] == 2\n"
+  };
+
+  if(v[6] == 10) then{
+    print "v[6] == 10\n"
+  };
+
+  if(v[0] == 12) then{
+    print "v[0] == 12\n"
+  };
+
   i = f();
 
-  if (i == 12) then{
-    print "i == 12\n";
+  if (i == 200) then{
+    print "i == 200\n";
     a = i;
   }
   else{
-    print "i != 12";
+    print "i != 200\n";
     i = a;
   };
-
-  print "João\n";
-  print "Marcos\n";
 
   i = 0;
   while (i < 5)

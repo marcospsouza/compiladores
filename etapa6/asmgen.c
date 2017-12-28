@@ -52,7 +52,7 @@ void asmGenerator(char *filename, TAC* code){
   			case TAC_BEGINFUN:fprintf(fout, "\n##BEGFUN\n"
   							 				".text\n"
 											".globl	%s\n"
-											".type	%s, @function\n"
+											".type	%s, @function\n\n"
 											"%s:\n"
 											"\tpushq	%%rbp\n"
 											"\tmovq	%%rsp, %%rbp\n", tac->res->value, tac->res->value, tac->res->value);
@@ -82,6 +82,10 @@ void asmGenerator(char *filename, TAC* code){
 											"\t.size	%s, 4\n"
 											"%s:\n"
 											"\t.long	%s", tac->res->value, tac->res->value, tac->res->value, tac->res->value, tac->op1->value);
+				break;
+
+			case TAC_VECDEC: fprintf(fout, "##VECDEC\n"
+											".comm	%s,%d,32\n", tac->res->value, atoi(tac->op1->value) * 4);
 				break;
   			
   			case TAC_JMP: fprintf(fout, "\n\tjmp .%s\n", tac->res->value); break;
@@ -231,6 +235,28 @@ void asmGenerator(char *filename, TAC* code){
   							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op1->value);
   							fprintf(fout, "\tmovl %%eax, %s(%%rip)\n", tac->res->value);
 						}
+				break;
+
+			case TAC_VASSIGN: fprintf(fout, "\n##VEC ASSIGN\n");
+  						if (tac->prev->type == TAC_FUNCALL)
+							fprintf(fout, "\tmovl %%eax, %s+%d(%%rip)\n", tac->res->value, atoi(tac->op1->value) * 4);
+						else if(tac->prev->type == TAC_VACCESS){
+							fprintf(fout, "\tmovl %s+%d(%%rip), %%eax\n"
+											"\tmovl %%eax, %s+%d(%%rip)\n", tac->prev->op1->value, atoi(tac->prev->op2->value) * 4,
+											tac->res->value, atoi(tac->op1->value) * 4);
+						}
+						else if (tac->op2->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %s+%d(%%rip)\n", tac->op2->value, tac->res->value, atoi(tac->op1->value) * 4);
+						else{ //var
+							fprintf(fout, "\tmovl %s(%%rip), %%eax\n"
+											"\tmovl %%eax, %s+%d(%%rip)\n", tac->op2->value, tac->res->value, atoi(tac->op1->value) * 4);
+						}
+						
+				break;
+
+			case TAC_VACCESS: fprintf(fout, "\n##VEC READ\n");
+						fprintf(fout,"\tmovl	%s+%d(%%rip), %%eax\n"
+									"\tmovl	%%eax, %s(%%rip)\n", tac->op1->value, atoi(tac->op2->value) * 4, tac->res->value);
 				break;
 
 		}

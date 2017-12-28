@@ -98,6 +98,7 @@ program : decl { //astPrint($1,0);
 					semanticCheckOperands($1);
 					code = tacReverse(tacGenerator($1));
 					tacPrintForward(code);
+					//hash_print();
 					asmGenerator("out.s",code);
 				}
 

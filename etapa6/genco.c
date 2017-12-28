@@ -122,7 +122,7 @@ TAC* tacGenerator(AST* node){
     case AST_OR: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_OR, makeTemp(), code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
 
     case AST_ASSIGN: return tacJoin(code[0],tacCreate(TAC_ASSIGN,node->symbol,code[0]?code[0]->res:0,0));break;
-    case AST_VASSIGN: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_VASSIGN, node->symbol, code[1]?code[1]->res:0, code[0]?code[0]->res:0)); break;
+    case AST_VASSIGN: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_VASSIGN, node->symbol, code[0]?code[0]->res:0, code[1]?code[1]->res:0)); break;
     case AST_VACCESS: return tacJoin(code[0], tacCreate(TAC_VACCESS, makeTemp(), node->symbol, code[0]?code[0]->res:0)); break;
     case AST_KWIF: return makeIfThen(code[0],code[1], code[2]);break;
 

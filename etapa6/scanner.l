@@ -3,7 +3,7 @@
 	//Feito por Marcos Praisler de Souza (242239) e João Batista Henz (242251)
 
 	#include "hash.h"
-	#include "astree.h" //problemas idiotas sendo resolvidos - C flat é uma piada de mau gosto
+	#include "astree.h"
 	#include "y.tab.h"
 
 	int running = 1;

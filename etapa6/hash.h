@@ -9,7 +9,7 @@
 #define SYMBOL_LIT_STRING 4
 */
 
-#define SYMBOL_TEMPORARY_VAR 6
+#define SYMBOL_TEMPORARY_VAR 4
 #define SYMBOL_VAR 5
 #define SYMBOL_VEC 6
 #define SYMBOL_FUN 7

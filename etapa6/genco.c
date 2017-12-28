@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-TAC* makeIfThen(TAC* code0,TAC* code1);
+TAC* makeIfThen(TAC* code0,TAC* code1, TAC* code2);
 
 TAC* tacCreate(int type, HASH_NODE* res,HASH_NODE* op1,HASH_NODE* op2){
     TAC* newtac;
@@ -124,10 +124,8 @@ TAC* tacGenerator(AST* node){
     case AST_ASSIGN: return tacJoin(code[0],tacCreate(TAC_ASSIGN,node->symbol,code[0]?code[0]->res:0,0));break;
     case AST_VASSIGN: return tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_VASSIGN, node->symbol, code[1]?code[1]->res:0, code[0]?code[0]->res:0)); break;
     case AST_VACCESS: return tacJoin(code[0], tacCreate(TAC_VACCESS, makeTemp(), node->symbol, code[0]?code[0]->res:0)); break;
-    case AST_KWIF: return makeIfThen(code[0],code[1]);break;
+    case AST_KWIF: return makeIfThen(code[0],code[1], code[2]);break;
 
-    //case AST_KWPRINT: return tacJoin(code[0],tacCreate(TAC_PRINT(code[0]?code[0]->res,))); break;
-    //case AST_KWPRINT: return tacCreate(TAC_PRINT, node->symbol, 0, 0); break;
     case AST_PRINTARGS: return tacJoin(tacCreate(TAC_PRINTARG, code[0]?code[0]->res:0, 0, 0), code[1]);break;
     case AST_KWREAD: return tacCreate(TAC_READ, node->symbol, 0, 0); break;
 
@@ -180,16 +178,23 @@ TAC* makeWhile(TAC* code0, TAC* code1){
   return tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(initialTacLabel,code0),finalTacJump),code1),initialTacJump),finalTacLabel);
 }
 
-TAC* makeIfThen(TAC* code0,TAC* code1){
+TAC* makeIfThen(TAC* code0, TAC* code1, TAC* code2){
   TAC* newJumpTac = 0;
   TAC* newLabelTac = 0;
 
+  TAC* newJumpTac2 = 0;
+  TAC* newLabelTac2 = 0;
+
   HASH_NODE* newLabel = makeLabel();
+  HASH_NODE* newLabel2 = makeLabel();
 
   newJumpTac = tacCreate(TAC_JZ,newLabel,code0?code0->res:0,0);
   newLabelTac = tacCreate(TAC_LABEL,newLabel,0,0);
 
-  return tacJoin(tacJoin(tacJoin(code0,newJumpTac),code1), newLabelTac);
+  newJumpTac2 = tacCreate(TAC_JMP, newLabel2, 0, 0);
+  newLabelTac2 = tacCreate(TAC_LABEL, newLabel2, 0, 0);
+  
+  return tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(tacJoin(code0,newJumpTac),code1), newJumpTac2), newLabelTac), code2), newLabelTac2);
 }
 
 

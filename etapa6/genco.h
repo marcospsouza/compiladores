@@ -67,7 +67,7 @@ TAC* tacGenerator(AST* node);
 TAC* tacJoin(TAC* l1, TAC* l2);
 void tacPrintBack(TAC* last);
 TAC* makeWhile(TAC* code0, TAC* code1);
-TAC* makeIfThen(TAC* code0,TAC* code1);
+TAC* makeIfThen(TAC* code0,TAC* code1, TAC* code2);
 TAC* makeFun(HASH_NODE* f, TAC* c);
 
 TAC* tacReverse(TAC*last);

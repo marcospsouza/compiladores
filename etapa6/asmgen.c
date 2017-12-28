@@ -21,7 +21,6 @@ void asmGenerator(char *filename, TAC* code){
 		exit(5);
 	}
 
-
 	fprintf(fout, ".data\n");
 	for(int i = 0; i < HASH_SIZE; i++){
 		for(HASH_NODE *n = table[i]; n; n = n->next){
@@ -40,23 +39,35 @@ void asmGenerator(char *filename, TAC* code){
 		}
 	}
 
+
+
 	for (tac=code; tac != NULL; tac=tac->next){
-	
+		
 		switch(tac->type){
 			case TAC_LABEL: fprintf(fout, "\n.%s:\n", tac->res->value); break;
-
+			case TAC_FUNCALL: fprintf(fout, "\n##FUNCALL\n"
+											"\tmovl $0, %%eax\n"
+											"\tcall %s\n", tac->res->value);
+				break;
   			case TAC_BEGINFUN:fprintf(fout, "\n##BEGFUN\n"
   							 				".text\n"
 											".globl	%s\n"
 											".type	%s, @function\n"
 											"%s:\n"
-											"\tpushq	%rbp\n"
-											"\tmovq	%rsp, %rbp\n", tac->res->value, tac->res->value, tac->res->value);
+											"\tpushq	%%rbp\n"
+											"\tmovq	%%rsp, %%rbp\n", tac->res->value, tac->res->value, tac->res->value);
     			break;
 
   			case TAC_ENDFUN: 
     			fprintf(fout,  "\n\tpopq	%%rbp\n"
 								"\tret\n");
+    			break;
+
+    		case TAC_RETURN:
+    			if(tac->res->tk_type == LIT_INTEGER)
+    				fprintf(fout, "movl $%s, %%eax\n", tac->res->value);
+    			else
+    				fprintf(fout, "movl %s(%%rip), %%eax\n", tac->res->value);
     			break;
 
 			case TAC_PRINTARG: fprintf(fout, "\n## PRINT\n"
@@ -76,6 +87,19 @@ void asmGenerator(char *filename, TAC* code){
   			case TAC_JMP: fprintf(fout, "\n\tjmp .%s\n", tac->res->value); break;
 			case TAC_JZ: fprintf(fout, " .%s\n", tac->res->value);break;
 
+			case TAC_GT: fprintf(fout, "\n##GREATER\n");
+						if (tac->op1->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+						if (tac->op2->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+						fprintf(fout, "\tcmpl %%eax, %%edx\n");
+						fprintf(fout, "\tjle");
+				break;
+
 			case TAC_LS: fprintf(fout, "\n##LESS\n");
 						if (tac->op1->tk_type == LIT_INTEGER)
 							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
@@ -88,6 +112,60 @@ void asmGenerator(char *filename, TAC* code){
 						fprintf(fout, "\tcmpl %%eax, %%edx\n");
 						fprintf(fout, "\tjge");
 				break;
+
+			case TAC_GE: fprintf(fout, "\n##GREATER OR EQUAL\n");
+						if (tac->op1->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+						if (tac->op2->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+						fprintf(fout, "\tcmpl %%eax, %%edx\n");
+						fprintf(fout, "\tjl");
+				break;
+
+			case TAC_LE: fprintf(fout, "\n##LESS OR EQUAL\n");
+						if (tac->op1->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+						if (tac->op2->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+						fprintf(fout, "\tcmpl %%eax, %%edx\n");
+						fprintf(fout, "\tjg");
+				break;
+
+			case TAC_EQ: fprintf(fout, "\n##EQUAL\n");
+						if (tac->op1->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+						if (tac->op2->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+						fprintf(fout, "\tcmpl %%eax, %%edx\n");
+						fprintf(fout, "\tjne");
+				break;
+
+
+			case TAC_NE: fprintf(fout, "\n##NOT EQUAL\n");
+						if (tac->op1->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%edx\n", tac->op1->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%edx\n", tac->op1->value);
+						if (tac->op2->tk_type == LIT_INTEGER)
+							fprintf(fout, "\tmovl $%s, %%eax\n", tac->op2->value);
+						else
+							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op2->value);
+						fprintf(fout, "\tcmpl %%eax, %%edx\n");
+						fprintf(fout, "\tjne");
+				break;
+
 
   			case TAC_ADD: fprintf(fout,"\n##ADD\n");
   						if (tac->op1->tk_type == LIT_INTEGER)
@@ -145,13 +223,16 @@ void asmGenerator(char *filename, TAC* code){
 
 
   			case TAC_ASSIGN: fprintf(fout,"\n##ASSIGN\n");
-  						if (tac->op1->tk_type == LIT_INTEGER)
+  						if (tac->prev->type == TAC_FUNCALL)
+							fprintf(fout, "\tmovl %%eax, %s(%%rip)\n", tac->res->value);
+  						else if (tac->op1->tk_type == LIT_INTEGER)
   							fprintf(fout, "\tmovl $%s, %s(%%rip)\n", tac->op1->value, tac->res->value);
   						else{
   							fprintf(fout, "\tmovl %s(%%rip), %%eax\n", tac->op1->value);
   							fprintf(fout, "\tmovl %%eax, %s(%%rip)\n", tac->res->value);
 						}
 				break;
+
 		}
 	}
 

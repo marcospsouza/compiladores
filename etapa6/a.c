@@ -13,19 +13,18 @@ int b = 3;
 int func(){
 	return 3;
 }
-
 int main(){
 	b = func();
 	printf("ola amigos");
 }*/
+int a = 10;
+int b = 15;
+int i;
 
-int i = 0;
-int a = 2;
+int f(){
+	return a + b;
+}
+
 int main(){
-	if(a > i){
-
-	}
-	else{
-		
-	}
+	i = f();
 }
